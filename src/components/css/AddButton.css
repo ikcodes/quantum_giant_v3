@@ -1,0 +1,24 @@
+.AddButton{
+	background: #fff;
+  border-radius: 5px;
+	border: 1px solid transparent;
+  padding: 10px 10px 10px 5px;
+	transition: all 250ms;
+	transition-duration: 250ms !important;
+}
+.AddButton:hover{
+	background: #f9fafb;
+	border-color: #e3e3e3;
+	transition: all 250ms;
+}
+.AddButton:hover .ui.button{
+	background: inherit !important;
+	border-color: transparent !important;
+	box-shadow: none !important;
+	color: rgba(0,0,0,.8);
+}
+.AddButtonText{
+	color: #000;
+	display: inline;
+	margin-left: 5px;
+}

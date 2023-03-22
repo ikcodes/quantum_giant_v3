@@ -1,0 +1,381 @@
+/* purple: #413a5f; */
+/* tan:   #AD9D38 */
+/* lite purple: #5a6595 */
+
+body{
+  font-family: "Red Hat Display";
+}
+
+#appWrap {
+  background: #dfdfdf; /* Non-segments */
+  min-height: 100vh;
+  line-height: 1.5em;
+  margin-left: 200px; /* nav width */
+}
+
+#appContent{
+  max-width: 1200px;
+  padding: 15px;
+}
+
+#nav{
+  background: linear-gradient(#413a5f, #2b2545);
+  width: 200px;
+}
+#nav p.item{
+  color: #aaa;
+  font-family: "Rubik";
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  padding-left: 36px;
+  text-align: left;
+  text-transform: uppercase;
+  transition: color 300ms;
+}
+#nav .nav-title.nav-title-condense{
+  letter-spacing: -0.5px;
+  font-size: 15px;
+  margin-left: -1px;
+}
+#nav p.item.active, #nav p.item:hover{
+  color: #fff;
+  transition: color 100ms;
+}
+#nav p .nav-icon{
+  display: inline-block;
+  font-size: 15px !important;
+  margin-right: 9px !important;
+  margin-bottom: 0 !important;
+}
+#nav p.item.active .nav-icon{
+  color: #AD9D38;
+}
+#nav p.item.active:hover .nav-icon{
+  color: #AD9D38;
+}
+#navLogoContainer{
+  background: none !important;
+}
+#navLogo{
+  padding: 20px 20px 40px;
+}
+
+.ui.form input:not([type]):focus, .ui.form input[type="date"]:focus, .ui.form input[type="datetime-local"]:focus, .ui.form input[type="email"]:focus, .ui.form input[type="file"]:focus, .ui.form input[type="number"]:focus, .ui.form input[type="password"]:focus, .ui.form input[type="search"]:focus, .ui.form input[type="tel"]:focus, .ui.form input[type="text"]:focus, .ui.form input[type="time"]:focus, .ui.form input[type="url"]:focus{
+  border-color: #413a5f;
+}
+
+.ui.form .fields{
+  /* margin-bottom: 15px; */
+}
+
+.page{
+  min-height: 90vh;
+  padding: 15px 20px 20px !important; /* Reduced padding 08.2020 */
+  /* padding: 30px 30px 20px !important; */
+}
+
+
+/*===================================*/
+/*             ARTISTS PAGE          */
+/*===================================*/
+#artistsLetterMenu{
+  color: #413a5f;
+}
+
+#artistEdit .no-spelling{
+  display: none;
+  transition: all 440ms;
+}
+#artistEdit .yes-spelling{
+  display: block;
+  transition: all 440ms;
+}
+
+
+
+
+/*==============*/
+/* CATALOG PAGE */
+/*==============*/
+#ArtistList{
+  cursor: pointer;
+  max-width: 250px;
+  /* max-height: 500px; */
+  max-height: 78vh;
+  overflow-y: scroll;
+}
+#ArtistList .ui.segment{
+  padding: 10px 20px;
+  font-size: 14px;
+}
+#ArtistList .ui.segment:hover, #ArtistList .ui.segment.active{
+  /* text-shadow: 1px 2px 2px #aaaaaa88; */
+  font-weight: 500;
+}
+
+/* CATALOG ALBUM (list albums for selected artist) */
+.segment.catalogAlbum{
+  max-width: 500px;
+  padding: 15px;
+}
+.segment.catalogAlbum h1{
+  color: #AD9D38;
+  font-size: 48px;
+  text-align: center;
+}
+.segment.catalogAlbum h3{
+  margin: 0 0 8px;
+}
+.segment.catalogAlbum p{
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+.segment.catalogAlbum p.release-date{
+  color: #aaa;
+}
+.segment.catalogAlbum .ui.button.small{
+  margin-right: 10px;
+}
+
+/* TRACKLIST (list tracks) */
+.segment.catalogTracklist h2{
+  border-bottom: 2px solid #AD9D38;
+  display: inline-block;
+  padding: 5px 0 10px;
+  margin: 0 10px;
+}
+.segment.catalogTracklist h5{
+  color: #AD9D38;
+  margin: 0px;
+  padding: 10px 10px 0;
+}
+.segment.catalogTracklist p.action-icon{
+  /* font-family: "Rubik"; */
+  font-family: "Red Hat Display";
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  text-align: right;
+  text-transform: uppercase;
+}
+.segment.catalogTracklist p.action-icon a{
+  color: #AD9D38;
+}
+.segment.catalogTracklist p.action-icon a:hover{
+  color: #9D8D28;
+}
+.segment.catalogTracklist p.action-icon i{
+  font-size: 20px;
+  margin-left: 5px;
+}
+.segment.catalogTracklist ul.tracklist{
+  margin: 0 0 2px;
+  padding: 10px;
+}
+.segment.catalogTracklist ul.tracklist li{
+  font-size: 15px;
+  list-style: none;
+  margin: 0;
+}
+.segment.catalogTracklist p.action-icon:first-of-type{
+  padding-top: 10px;
+}
+
+
+
+.ui.form .field > label{
+  font-family: 'Rubik';
+  /* font-family: 'Red Hat Display'; */
+  font-weight: 500;
+}
+.ui.table thead th{
+  font-family: "Rubik";
+  font-weight: 500;
+}
+.table-scroll{
+  overflow-x: auto;
+}
+
+.gold{
+  color: #AD9D38 !important;
+}
+
+.purp{
+  color: #413a5f !important;
+}
+
+.slate{
+  color: #666 !important;
+}
+
+.gray-out{
+  background-color: #ddd !important;
+  color: #999 !important;
+}
+
+.ui.button{
+  font-family: "Red Hat Display";
+}
+.ui.form input:not([type]), .ui.form input[type="date"], .ui.form input[type="datetime-local"], .ui.form input[type="email"], .ui.form input[type="file"], .ui.form input[type="number"], .ui.form input[type="password"], .ui.form input[type="search"], .ui.form input[type="tel"], .ui.form input[type="text"], .ui.form input[type="time"], .ui.form input[type="url"]{
+  font-family: "Red Hat Display";
+}
+.ui{
+  font-family: "Red Hat Display";
+}
+
+/* Primary Button */
+.ui.primary.button, .ui.primary.buttons .button{
+  background-color: #413a5f;
+}
+.ui.primary.button:active, .ui.primary.buttons .button:active,
+.ui.primary.button:focus, .ui.primary.buttons .button:focus,
+.ui.primary.button:hover, .ui.primary.buttons .button:hover{
+  background-color: #2b2545;
+}
+
+/* Secondary Button */
+.ui.secondary.button, .ui.secondary.buttons .button{
+  background-color: #AD9D38;
+}
+.ui.secondary.button:active, .ui.secondary.buttons .button:active,
+.ui.secondary.button:focus, .ui.secondary.buttons .button:focus,
+.ui.secondary.button:hover, .ui.secondary.buttons .button:hover{
+  background-color: #9D8D28;
+}
+
+/* *:not(i){
+  font-family: -apple-system, Courier !important;
+}
+input, select{
+  display: block;
+  margin: 10px 0;
+}
+
+ol, ul {
+  padding-left: 30px;
+}
+
+.hide{
+  display: none;
+}
+*/
+
+
+/* LOGIN CONTAINER! 
+This element does not interact with React.
+This is shown to the user before the app is present.
+*/
+#loginContainer{
+  background: linear-gradient(#413a5f, #2b2545);
+  background-size: cover;
+  height: 100%;
+  width: 100vw;
+  position: fixed;
+  overflow: hidden;
+}
+#loginSegment{
+  padding: 30px 90px;
+  top: 120px;
+}
+#loginSegment img{
+  height: 160px;
+  margin-bottom: 15px;
+}
+#loginSegment h4, #loginSegment p{
+  color: #2b2545;
+  font-family: "Red Hat Display";
+  letter-spacing: 0px;
+  font-weight: 500;
+}
+#loginSegment h4{
+  font-weight: 600;
+  font-size: 20px;
+  margin: 10px 0 2px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+#loginSegment p{
+  font-size: 16px;
+  margin: 0 0 25px;
+}
+#loginSegment strong{
+  font-weight: 600;
+}
+
+@media only screen and (max-width : 768px){
+  .ui.menu .item{
+    padding: 0;
+  }
+  #nav{
+    width: 80px;
+  }
+  #nav #navLogo{
+    padding: 31px 14px 20px;
+  }
+  #nav p.item{
+    padding: 12px 28px;
+  }
+  #nav p.item i.nav-icon{
+    font-size: 20px !important;
+  }
+  .ui.labeled.icon.menu .item{
+    min-width: 0 !important;
+  }
+  .nav-title{
+    display: none !important;
+  }
+  #appWrap{
+    margin-left: 80px;
+  }
+  #appContent{
+    padding: 10px;
+  }
+  .page{
+    padding: 20px !important;
+  }
+  
+ 
+}
+
+
+/* ARTIST SUMMARY SHIT  */
+
+/* TABLET / MOBILE */
+@media only screen and (max-width: 1023px){
+  #queryCustomDatesContainer{
+    left: 15px;
+    position: relative;
+    right: 0;
+    top: 0;
+    width: 100%;
+  }
+  #queryCustomDates{
+    width: 100% !important;
+  }
+  #channelFilteringContainer{
+    margin-bottom: 15px;
+  }
+}
+
+/* DESKTOP */
+@media only screen and (min-width: 1024px){
+  #queryCustomDates{
+    min-width: 400px;
+  }
+  #queryCustomDatesContainer{
+    position: absolute;
+    right: 29px;
+    top: 90px;
+  }
+  
+  .large-t-marg-15{
+    margin-top: 15px;
+  }
+  .large-t-marg-30{
+    margin-top: 30px;
+  }
+  
+}
+

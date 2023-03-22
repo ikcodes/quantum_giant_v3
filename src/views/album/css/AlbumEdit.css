@@ -1,0 +1,8 @@
+.no-release-date{
+  display: none;
+  transition: all 440ms;
+}
+.yes-release-date{
+  display: block;
+  transition: all 440ms;
+}

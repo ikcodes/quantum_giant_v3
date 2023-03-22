@@ -1,0 +1,64 @@
+.pageHeader{
+  line-height: 28px;
+  color: #413a5f;
+}
+.pageHeader a h1{
+  color: #413a5f;
+}
+.pageHeader a h1:hover{
+  color: #2b2545;
+}
+
+.pageHeader h1{
+  display: inline-block;
+  font-family: 'Rubik';
+  font-size: 28px;
+  font-weight: 500;
+  margin: 0;
+  /* letter-spacing: 1.5px; */
+  text-transform: uppercase;
+}
+
+.pageHeader .pageIcon{
+  color: #AD9D38;
+  font-size: 22px;
+  margin-right: 10px;
+  position: relative;
+  top: -1px;
+}
+
+.pageHeader #breadcrumbs, .pageHeader #breadcrumbs li{
+  display: inline-block;
+  font-size: 14px;
+  /* font-family: "Rubik"; */
+  font-family: "Red Hat Display";
+  list-style: none;
+  letter-spacing: 2px;
+  margin: 0;
+  padding-left: 12px;
+  position: relative;
+  text-transform: uppercase;
+  top: -2px;
+}
+
+.pageHeader #breadcrumbs .gold{
+  color: #AD9D38;
+}
+
+.pageHeader hr{
+  border: 1px solid #aaa;
+  margin: 10px 0 15px;
+}
+
+.pageHeader .instructions{
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* SMALL ONLY */
+@media only screen and (max-width : 768px){
+	.pageHeader h1{
+		font-size: 22px;
+	}
+}

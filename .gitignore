@@ -1,0 +1,10 @@
+# JSX Schtuff
+build/
+static/
+node_modules/
+
+# Creds / setup (use the sample file)
+public/config.php
+
+# OSX
+.DS_Store

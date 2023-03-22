@@ -1,0 +1,53 @@
+a, a:visited{
+  /* border-bottom: 1px solid #413a5f; */
+  color: #413a5f;
+}
+
+a:hover{
+  /* border-color: #5a6595; */
+  color: #5a6595;
+}
+
+.App {
+  font-family: "Fantasque Sans Mono";
+  text-align: left;
+}
+
+#userNav{
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+#userNav li{
+  display: inline-block;
+  list-style: none;
+  margin-right: 15px;
+}
+#userNav li.active{
+  color: greenyellow;
+}
+
+#appWrap {
+  background: #dfdfdf; /* Non-segments */
+  min-height: 100vh;
+  line-height: 1.5em;
+  margin-left: 200px; /* nav width */
+}
+
+#appPadding{
+  background-color: #eee;
+  padding: 10px;  /* Reduced Padding 08.2020 */
+  min-height: 100vh;
+}
+
+@media only screen and (max-width : 768px){
+  #appWrap{
+    margin-left: 80px;
+  }
+  #appPadding{
+    padding: 10px;
+  }
+  #appContent{
+    padding: 10px;
+  }
+}

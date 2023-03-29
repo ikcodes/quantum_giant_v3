@@ -21,7 +21,11 @@ React Router handles user navigation on the frontend, with all other PHP routing
 Hosted alongside the frontend's PHP index, a PHP REST API following RESTful principles serves all dynamic requests from the app. Each file in the `routes` folder serves as a controller, utilizing a targeted `action` to serve the request. In accordance with current development goals, this will be upgraded to a reusable Docker container, instead of relying on ad-hoc SFTP transfers.
 
 ## API Route Structure
-`{host}/api/{route}/{action}?params=action-or-route-specific`
+`{host}/api/{route}/{action}?params=action-or-route-specific&multi_params=possible`
+
+A really cool feature of the app is that frontend params can be shared via the backend. For example, say an employee wants to see how a certain artist is doing in March. They can directly bookmark a frontend url like `{prodHost}.com/artist/{artist_id}/spins?start_date=2023-03-01&end_date=2023-04-01`. This is helpful for the app's power users, and is insanely convenient for me to use, based on the complexity of the queries facilitated by the API. Speaking of which...
+
+
 
 ## Disclaimer
 Quantum Giant is a proprietary internal tool for my former employer. Unfortunately, it's not for use anywhere else. This repo exists publicly solely to provide a showcase.

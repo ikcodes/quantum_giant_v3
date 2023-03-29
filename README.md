@@ -25,7 +25,10 @@ Hosted alongside the frontend's PHP index, a PHP REST API following RESTful prin
 
 A really cool feature of the app is that frontend params can be shared via the backend. For example, say an employee wants to see how a certain artist is doing in March. They can directly bookmark a frontend url like `{prodHost}.com/artist/{artist_id}/spins?start_date=2023-03-01&end_date=2023-04-01`. This is helpful for the app's power users, and is insanely convenient for me to use, based on the complexity of the queries facilitated by the API. Speaking of which...
 
+## DB setup / queries
+First, a bit of context. One of the company's main problems – a problem that plagues every corner of Royalty Metadata World – is string matching. Be it human error via misspellings or character limits via public APIs, **performances very frequently go unreported**. To solve for this, the database ingests data exactly as it is displayed (see `xm_cataloguer` for the ingestion mechanism), and effient-but-complex queries are utilized to do most of the heavy lifting. 
 
+Fortunately, all of this knowledge is built into architecture of the application, allowing users to *flag alternate spellings on anything* and retroactively reassign them to their proper place. For that reason, queries are built dynamically, and while they appear bulky, response times are often extremely quick.
 
 ## Disclaimer
-Quantum Giant is a proprietary internal tool for my former employer. Unfortunately, it's not for use anywhere else. This repo exists publicly solely to provide a showcase.
+Quantum Giant is a proprietary internal tool exclusively licensed for use by my former employer. Unfortunately, it's not for use anywhere else. This repo exists publicly solely to serve as a showcase.

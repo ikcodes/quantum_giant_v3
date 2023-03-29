@@ -11,10 +11,17 @@ V3 will begin exactly where V2 left off, seeking to satisfy several goals (as fo
 - Add user features and fix bugs as reported.
 
 ## Frontend App Info
-Written in vanilla JS (to be replaced by TS in v3), this app uses a React SPA hosted on a PHP index that also facilitates connection to the API. Local frontend development is possible by using the remote API, provided the user targets the public API url and uses the standard CRA HTML index. The PHP index then gets the HTML file's contents to serve at the base route, and all other PHP routing pertains to the API (React Router handles user navigation on the frontend).
+Written in vanilla JS (to be replaced by TS in v3), this app uses a React SPA hosted on a PHP index that also facilitates connection to the API. 
+
+Local frontend development is possible by using the remote API, provided the user targets the public hosted API url and configures the app to mount to the standard HTML index, a la CRA. If using the PHP index, contents of the HTML file are ingested and served to base route, to which the SPA is mounted, and beyond which the API can be accessed via the same host. 
+
+React Router handles user navigation on the frontend, with all other PHP routing being sequestered to the API.
 
 ## API Info
 Hosted alongside the frontend's PHP index, a PHP REST API following RESTful principles serves all dynamic requests from the app. Each file in the `routes` folder serves as a controller, utilizing a targeted `action` to serve the request. In accordance with current development goals, this will be upgraded to a reusable Docker container, instead of relying on ad-hoc SFTP transfers.
+
+## API Route Structure
+`{host}/api/{route}/{action}?params=action-or-route-specific`
 
 ## Disclaimer
 Quantum Giant is a proprietary internal tool for my former employer. Unfortunately, it's not for use anywhere else. This repo exists publicly solely to provide a showcase.

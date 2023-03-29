@@ -99,7 +99,7 @@ class DanSummary extends React.Component {
               }
             );
           } else {
-            console.log("Could not get shit!!!! No res.data.summary!");
+            console.log("Could not get stuff!!!! No res.data.summary!");
             console.log(res.data);
           }
         });

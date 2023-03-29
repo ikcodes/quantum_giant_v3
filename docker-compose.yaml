@@ -1,0 +1,36 @@
+version: "3"
+services:
+  #--------------------------------------
+  # WEB SERVER (Hosts both app and API)
+  #--------------------------------------
+  www:
+    image: php:8.1-apache
+    volumes:
+      - "./:/var/www/html"
+    networks:
+      - 800local
+    # Port routing
+    # AccessPort:RedirectToPort
+    ports:
+      - 80:80
+      # - 443:443
+
+  #---------------
+  # PHPMA SERVICE
+  #---------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    networks:
+      - 800local
+    ports:
+      - 8001:80
+
+#-----------
+# NETWORKS
+#-----------
+networks:
+  800local:
+    driver: bridge

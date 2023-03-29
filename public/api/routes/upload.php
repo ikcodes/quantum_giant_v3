@@ -23,7 +23,7 @@ if($ACTION == 'album'){
 			'label_id' => $label_id,
 		);
 		
-		// LOOP 1: FIND SHIT OUT
+		// LOOP 1: GET INFO
 		// =======================
 		$compilation = false;	// Set to true for add'l AXA updates
 		$first_artist = $_POST['album'][0]['Artist'];
@@ -69,12 +69,12 @@ if($ACTION == 'album'){
 				$res['album_created'] = true;
 				
 				if($album_id == 0){
-					dnd($album_params, "What the fuck! Here are the params...");
+					dnd($album_params, "Upload unsuccessful - here are the params...");
 				}
 			}
 		}
 	
-		// LOOP 2: DO SHIT WITH IT
+		// LOOP 2: USE INFO
 		//=========================
 		$index = 0;	// Last ditch try
 		$tracks_added = 0;

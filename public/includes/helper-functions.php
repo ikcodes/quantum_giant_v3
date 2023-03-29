@@ -438,7 +438,7 @@ function getWeektext($week_int){
 }
 
 
-// CSV SHIT
+// CSV stuff
 function csvFromSpins($spins){
 	$csv = array(
 		array('Title', 'Artist', 'Channel', 'Date', 'Time'),	// $arr[0] is headers

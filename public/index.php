@@ -30,7 +30,7 @@ session_start();
 if(!empty($_POST)){
 	if(!empty($_POST['username'] && !empty($_POST['wordpass']))){
 	
-		// Quick anti-SQL injection shit.
+		// Quick anti-SQL injection stuff.
 		$username = trim(substr($_POST['username'], 0, 50));
 		$password = trim(substr($_POST['wordpass'], 0, 50));
 		$user = verifyUser($username, $password);

@@ -14,9 +14,6 @@ if($ACTION == 'get'){
 	);
 }
 
-// FOR SOME REASON: Insert Ignore did NOT work here. 
-// There is a sizeable workaround. KEEP IT, MOTHERFUCKER.
-//========================================================
 if($ACTION == 'add'){
 	$tm = new Model('sxm_commercials');
 	if(trim($_POST['title']) && trim($_POST['artist'])){

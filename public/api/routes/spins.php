@@ -178,7 +178,7 @@ if($ACTION === 'get-spins'){
 function refineSpinsForDisplay($spins){
 	foreach($spins as &$spin){
 		foreach ($spin as $key => $value) {
-			if (is_int($key)) {	// Get rid of those fucking annoying numeric keys
+			if (is_int($key)) {
 				unset($spin[$key]);
 			}
 		}

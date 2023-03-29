@@ -91,7 +91,7 @@ function getLabelSummary($post, $csv = false){
 		
 		$DOING_CUSTOM = true;
 		$start_ts = !empty($post['start_date']) ? timestampForDatabase($post['start_date']. ' 00:00:00') : timestampForDatabase('2000-01-01 00:00:00');
-		$end_ts = (!empty($post['end_date'])) ? timestampForDatabase($post['end_date']. ' 23:59:59') : timestampForDatabase('2050-01-01 23:59:59');	// TRY ADDING FUCKING TIME ? TO BOTH?
+		$end_ts = (!empty($post['end_date'])) ? timestampForDatabase($post['end_date']. ' 23:59:59') : timestampForDatabase('2050-01-01 23:59:59');
 	}else{
 		$weeks_shown = !empty($post['weeks']) ? intval($post['weeks']) : 4;
 	}

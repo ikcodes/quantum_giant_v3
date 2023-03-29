@@ -11,7 +11,7 @@ if($ACTION == 'track-custom' || $ACTION == 'artist-custom' || $ACTION == 'album-
 	$end_date = date('Y-m-d H:i:s', strtotime($_POST['end_date'] . ' +23 hours 59 minutes 59 seconds'));
 	$channel = !empty($_POST['channel']) ? intval($_POST['channel']) : 0;
 	
-	if(!$start_date){ die("You fucked up! I need start AND end dates!"); }
+	if(!$start_date){ die("Endpoint needs start AND end dates!"); }
 	
 	// All possible spellings for artist and all possible tracks
 	$sm = new Model($table);
@@ -96,7 +96,7 @@ if($ACTION == 'artist' || $ACTION == 'album' || $ACTION == 'track'){
 	$weeks_shown = intval($_POST['weeks_shown']);
 	$channel = !empty($_POST['channel']) ? intval($_POST['channel']) : 0;
 	
-	if($weeks_shown < 0 ){ die("You fucked up! I need a positive wks shown"); }
+	if($weeks_shown < 0 ){ die("Endpoint needs a positive wks shown"); }
 	
 	// All possible spellings for artist and all possible tracks
 	$sm = new Model($table);

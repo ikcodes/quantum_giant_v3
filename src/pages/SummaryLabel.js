@@ -297,8 +297,6 @@ class LabelSummary extends React.Component {
         }
         axios.post(config.get("api_url") + "label/summary-csv", csvPost).then((res) => {
           if (res.data.csv.length) {
-            // console.log('FILENAME IN HERE???');
-            // console.log(res.data);
             this.setState(
               {
                 csv_ready: false, // Flip it back, who knows...
@@ -309,10 +307,6 @@ class LabelSummary extends React.Component {
               () => this.renderExportButton
             );
           }
-          // this.setState({
-          // csvExport: [{'test': 'success'}, {'test2': 'success2'}]
-          // }, () => this.renderExportButton() )	// We appear to not need this :O
-          // })
         });
       }
     );
@@ -328,7 +322,7 @@ class LabelSummary extends React.Component {
           loading: true,
         },
         () => {
-          this.renderExportButton(); // BLANK IT OUT, & REPLACE WITH NEW $#!+
+          this.renderExportButton();
           var postData = {
             label_id: this.state.label_id,
           };
@@ -364,13 +358,11 @@ class LabelSummary extends React.Component {
                     summaryPost["custom"] = false;
                   }
                   axios.post(config.get("api_url") + "label/summary", summaryPost).then((res) => {
-                    // if(res.data){ console.log(res.data); }
                     let newWeekText = this.convertWeeksToText(this.state.weeks_shown);
                     this.setState(
                       {
                         loading: false,
                         csvExport: res.data.csv,
-                        // summary: res.data.summary,	// Two arrays... spins[] and chartData[]
                         summary: res.data,
                         weeks_shown_text: "Now viewing all spins in the " + newWeekText + ".",
                       },
@@ -425,8 +417,6 @@ class LabelSummary extends React.Component {
           </Table.Row>
         </Table.Body>
       );
-    } else {
-      // console.log('Necessary conditions not met to load in the spin metrics!');
     }
 
     return (
@@ -439,8 +429,6 @@ class LabelSummary extends React.Component {
             instructions={this.state.weeks_shown_text}
             breadcrumbs_1={this.state.label_name || "Label..."}
             breadcrumbs_1_url={this.state.breadcrumbs_1_url || null}
-            // breadcrumbs_2={ this.state.label_name || '' }
-            // breadcrumbs_2_url={ this.state.breadcrumbs_2_url || null }
           />
           <div id='queryCustomDatesContainer'>
             <Radio
@@ -465,13 +453,7 @@ class LabelSummary extends React.Component {
               type='number'
               onChange={this.updateWeeksShown}
               value={this.state.weeks_shown}
-              // disabled={this.state.loading}
             />
-
-            {/* <Radio toggle onChange={this.state.custom_range === true ? this.deactivateCustomDates : this.activateCustomDates } label={this.state.custom_range === true ? 'Deactivate Custom Dates' : 'Activate Custom Dates'} /> */}
-            {/* <Button onClick={this.state.custom_range === true ? this.deactivateCustomDates : this.activateCustomDates } style={{marginBottom: 15}}>
-							{ this.state.custom_range === true ? 'Deactivate Custom Dates' : 'Activate Custom Dates' }
-						</Button> */}
 
             <ChannelFiltering
               activeChannel={parseInt(this.state.channel)}
@@ -539,18 +521,11 @@ class LabelSummary extends React.Component {
             </div>
           </div>
 
-          {/* <div className='cell'>
-						<div className='grid-x grid-margin-x align-bottom'>
-							<div className='cell shrink'>
-								<h3>Recent Spins</h3>
-							</div>
-							<div className='cell auto'>
-								<p>Not all spins shown.</p>
-							</div>
-						</div>
-					</div> */}
-
           <div className='cell small-12 table-scroll'>
+            <p className='note'>
+              <strong>Note:</strong> Spins are truncated for app performance. Please export to see a
+              detailed list of all the spins in this time range.
+            </p>
             <Table size='small' celled compact striped unstackable style={displayTableStyle}>
               <Table.Header>
                 <Table.Row>

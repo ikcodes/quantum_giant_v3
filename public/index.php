@@ -13,7 +13,7 @@ For global markup, see index.html
 $DEBUG = 0;
 
 // Dependencies 
-$SPA_MARKUP = file_get_contents('index.html');	// npm run build from local proj root. Paths to dependencies are also from root.
+$SPA_MARKUP = file_get_contents('template/index.html');	// npm run build from local proj root. Paths to dependencies are also from root.
 require_once('includes/classes/Singleton.php');
 require_once('includes/classes/Registry.php');
 require_once('includes/classes/Database.php');
@@ -39,7 +39,7 @@ if(!empty($_POST)){
 			die("We don't have a login :(");
 		}else{	// Bingo
 			$_SESSION['user_id'] = $user['id'];
-			$_SESSION['user_fname'] = $user['first_name'];
+			// $_SESSION['user_fname'] = $user['first_name'];
 			
 			// Redirect user if previously requested URL was blocked via login
 			if(isset($_SESSION['prev_url'])){
@@ -113,7 +113,7 @@ if($DEBUG && !$api_request){
 //  --> MARKUP REQUEST - OUTPUT BUFFER APP MARKUP
 //================================================
 ob_start();
-if($_SESSION['user_id']){
+if(isset($_SESSION['user_id'])){
 	// echo "<p>" . $_SESSION['user_fname'] . " is logged in!</p>";
 	// echo "<!-- URL: " . implode(' - / - ', $url) ." -->";
 	// echo "<!-- OH, HELLO -->";

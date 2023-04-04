@@ -523,12 +523,16 @@ function addFilters($args, $mode){	// channel, start_date, end_date, include_web
 		}elseif($mode == 'params'){
 			$filters[] = intval($args['channel']);
 		}
-	}else{	// No channel passed, so we are safe to exclude web.
-		if(isset($args['include_web']) && $args['include_web'] == 'true'){
+	}
+	else{	// No channel passed, so we are safe to exclude web.
 
-			// Since this is a subquery, we only need to return filters for 'fields' part of this function.
-			if($mode == 'fields'){
-				$filters[] = 'channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)';
+		if($mode == 'fields'){
+
+			// Exclude web spins unless `include_web=true` passed in args
+			if( empty($args['include_web']) || (!empty($args['include_web']) && $args['include_web'] != 'true'))
+			{
+				// Since this is a subquery, we only need to return filters for 'fields' part of this function.
+				$filters[] = 'channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1) ';
 			}
 		}
 	}

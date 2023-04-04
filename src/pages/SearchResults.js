@@ -63,8 +63,6 @@ class SearchResults extends React.Component {
     params["get_csv"] = this.state.exports_are_in === false ? 1 : 0;
     axios.post(config.get("api_url") + "spins/get-spins", params).then((res) => {
       if (res.data.spins && res.data.spin_ct) {
-        // console.log('we have spins!');
-        // console.log(res.data.spins);
         this.setState(
           {
             spins: res.data.spins,

@@ -5,14 +5,7 @@ import config from "react-global-configuration";
 import PageHeader from "../components/PageHeader";
 import DateFiltering from "../components/DateFiltering";
 import ChannelFiltering from "../components/ChannelFiltering";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Segment,
-  Icon,
-  // Table
-} from "semantic-ui-react";
+import { Button, Checkbox, Form, Segment, Icon } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
 
 class Search extends React.Component {

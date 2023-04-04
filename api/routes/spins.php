@@ -370,23 +370,15 @@ function buildQuery($args){
 	}
 	$sql = 'SELECT * FROM '.$table.' WHERE '.$where_sql;
 	
-	// var_dump($where_params);
-	// echo "0-----------------------";
-	// dnd($where_sql);
-	
 	return array(
 		'sql' => $sql,
 		'params' => $where_params,
 	);
 }
 
-function buildNoIdQuery($args){	// artist_name, album_name, track_title
-	dnd($args, ' ====> CURRENTLY, WE DO NOT SUPPORT buildNoIdQuery');
-}
-
-function buildSimpleQuery($args){	// artist_name, track_title
+function buildSimpleQuery($args){
 	
-	$fields = addFilters($args, 'fields');	// Start here!!!! easier to push onto existing array instead of merging them later.
+	$fields = addFilters($args, 'fields');	// Easier to push onto existing array instead of merging them later.
 	$params = addFilters($args, 'params');
 	if(!empty($args['artist_name'])){
 		$fields[] = 'artist=?';
@@ -408,6 +400,8 @@ function buildSimpleQuery($args){	// artist_name, track_title
 	return $query;
 }
 
+// I don't think this is used.
+//=================================
 function buildEverythingOwnedQuery($args){
 	
 	global $sm;
@@ -493,7 +487,7 @@ function buildEverythingOwnedQuery($args){
 //========================
 // HAPPENS TO EVERYTHING!
 //========================
-function addFilters($args, $mode){	// channel, start_date, end_date
+function addFilters($args, $mode){	// channel, start_date, end_date, include_web
 	
 	$filters = array();	// Returns an array no matter what mode.
 	
@@ -520,67 +514,24 @@ function addFilters($args, $mode){	// channel, start_date, end_date
 			}
 		}
 	}	// End start_date/end_date
+
+
+	// Add channel to args
 	if(!empty($args['channel'])){
 		if($mode == 'fields'){
 			$filters[] = 'perfs.channel=?';
 		}elseif($mode == 'params'){
-			$filters[] = intval($args['channel']);	// Risky?
+			$filters[] = intval($args['channel']);
+		}
+	}else{	// No channel passed, so we are safe to exclude web.
+		if(isset($args['include_web']) && $args['include_web'] == 'true'){
+
+			// Since this is a subquery, we only need to return filters for 'fields' part of this function.
+			if($mode == 'fields'){
+				$filters[] = 'channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)';
+			}
 		}
 	}
 
-
-	// START HERE: implement more robust solution
-	// Post body submits include_web=true if we want them 
-	// If not, exclude.
-	
-	// Exclude She's So Funny spins from Web channel!
-	// This needs a more robust solution.
-	$filters[] = ( $mode == 'params' ? 106 : 'channel <> ?' );
-	// $filters[] = ( $mode == 'params' ? 104 : 'channel <> ?' );
-	$filters[] = ( $mode == 'params' ? 93 : 'channel <> ?' );
-	// $filters[] = ( $mode == 'params' ? 'NULL' : 'channel IS NOT NULL' );	// THIS IS BROKEN!
-	
 	return $filters;
 }
-
-function getSpins($query){
-	dnd($query, ' ==> getSpins!'); 
-}
-
-
-// die;	// No! It processes the whole way down!
-
-/*
-
-	// MATCH TO OLD CODE STARTED HERE
-	// Get all tracks and alt spellings
-	$our_tracks = $sm->db->fetch('SELECT t.track_title, a.artist_name FROM our_tracks t INNER JOIN our_artists a ON a.artist_id=t.artist_id');
-	dnd($our_tracks);
-	$our_alt_spellings = $sm->db->fetch('SELECT track_alt_spelling FROM our_tracks__alt_spelling');
-	
-	// $track_title_params = array_map(function($track){
-	// 	return $track['track_title'];
-	// }, $our_tracks);
-	// $track_artist_params = array_map(function($track){
-	// 	return $track['artist_name'];
-	// });
-	
-	$artist_title_params = array_map(function($track){
-		
-	});
-	
-	
-	$track_spelling_params  = array_map(function($alt){
-		return $alt['track_alt_spelling'];
-	}, $our_alt_spellings);
-	$artist_spelling_params = array_map(function($alt){
-		
-	}, $our_alt_spellings);
-	
-	$titles = array_merge($our_tracks, $spellings);
-	$artists = array_merge();
-	
-	dnd($trax);
-	
-	// MATCH TO OLD CODE ENDED HERE
-	*/

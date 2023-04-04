@@ -120,7 +120,15 @@ function getLabelSummary($post, $csv = false){
 		
 		$channel_sql = (!empty($channel) ? ' AND channel=? ' : '') . excludeChannelSql();
 		$between_sql = "( timestamp_utc BETWEEN ? AND ? )";
-		$custom_sql = "SELECT * FROM $table WHERE artist IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? )  AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) AND ".$between_sql . $channel_sql . " ORDER BY timestamp_utc desc";
+		$custom_sql = "SELECT * 
+									 FROM $table 
+									 WHERE artist 
+									 	IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? ) 
+										AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) 
+										AND ".$between_sql . $channel_sql . " 
+										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
+										ORDER BY timestamp_utc desc";
+
 		$custom_params = array_merge($artist_spellings, $track_spellings, array($start_ts, $end_ts));
 		$res['SQL'] = $custom_sql;
 		$res['Params'] = $custom_params;

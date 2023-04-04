@@ -126,8 +126,6 @@ class Search extends React.Component {
       this.setState({
         redirect_url: finalUrl,
       });
-    } else {
-      console.log("Could not complete search!");
     }
   }
 

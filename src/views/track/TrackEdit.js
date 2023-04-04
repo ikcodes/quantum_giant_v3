@@ -63,21 +63,14 @@ class TrackEdit extends React.Component {
           })
           .then((res) => {
             if (res.data.track) {
-              this.setState(
-                {
-                  track: res.data.track,
-                  breadcrumbs_1: res.data.track["track_title"],
-                  instructions:
-                    "Use the fields below to edit the metadata for " +
-                    res.data.track["track_title"] +
-                    ".",
-                },
-                () => {
-                  // console.log(this.state.track);
-                }
-              );
-            } else {
-              console.log("No track received here!");
+              this.setState({
+                track: res.data.track,
+                breadcrumbs_1: res.data.track["track_title"],
+                instructions:
+                  "Use the fields below to edit the metadata for " +
+                  res.data.track["track_title"] +
+                  ".",
+              });
             }
           })
           .then(() => {
@@ -101,47 +94,29 @@ class TrackEdit extends React.Component {
   getDropdownAlbums() {
     axios.get(config.get("api_url") + "albums/load-for-dropdown").then((res) => {
       if (res.data.albums) {
-        // console.log(res.data.albums);
-        // console.log('RES DATA ALBUMS ^');
-        this.setState(
-          {
-            dropdownAlbums: res.data.albums.map((album) => {
-              return {
-                value: album["album_id"],
-                label: album["album_title"],
-                artist_id: album["artist_id"],
-              };
-            }),
-          },
-          () => {
-            console.log("Cannot get albums.");
-            console.log(res.data);
-          }
-        );
-      } else {
-        console.log("NO RESPONSE FROM ALBUMS");
+        this.setState({
+          dropdownAlbums: res.data.albums.map((album) => {
+            return {
+              value: album["album_id"],
+              label: album["album_title"],
+              artist_id: album["artist_id"],
+            };
+          }),
+        });
       }
     });
   }
   getDropdownArtists() {
     axios.get(config.get("api_url") + "artists/load-for-dropdown").then((res) => {
       if (res.data.artists !== undefined) {
-        this.setState(
-          {
-            dropdownArtists: res.data.artists.map((artist) => {
-              return {
-                value: artist["artist_id"],
-                label: artist["artist_name"],
-              };
-            }),
-          },
-          () => {
-            // console.log("WE HAVE ARTISTS:");
-            // console.log(this.state.dropdownArtists);
-          }
-        );
-      } else {
-        console.log("NO RESPONSE FROM dropdownArtists");
+        this.setState({
+          dropdownArtists: res.data.artists.map((artist) => {
+            return {
+              value: artist["artist_id"],
+              label: artist["artist_name"],
+            };
+          }),
+        });
       }
     });
   }
@@ -164,31 +139,19 @@ class TrackEdit extends React.Component {
     } else {
       currTrack[name] = value;
     }
-    this.setState(
-      {
-        track: currTrack, // New object with updated property.
-      },
-      () => {
-        // console.log("handleInputChange ---> this.state.track");
-        // console.log(this.state.track);
-      }
-    );
+    this.setState({
+      track: currTrack, // New object with updated property.
+    });
   }
 
   addAlternateSpelling() {
-    this.setState(
-      (prevState) => {
-        var newTrack = prevState.track;
-        newTrack.alt_spellings.push("");
-        return {
-          track: newTrack,
-        };
-      },
-      () => {
-        // console.log('state after adding alt spelling:');
-        // console.log(this.state);
-      }
-    );
+    this.setState((prevState) => {
+      var newTrack = prevState.track;
+      newTrack.alt_spellings.push("");
+      return {
+        track: newTrack,
+      };
+    });
   }
 
   manageArtistGivenAlbum(album_id) {
@@ -203,8 +166,6 @@ class TrackEdit extends React.Component {
           newTrack["artist_id"] = res.data.album.artist_id;
         }
         this.setState({ track: newTrack });
-      } else {
-        console.log("Failed to get album with id: " + album_id);
       }
     });
   }
@@ -217,9 +178,6 @@ class TrackEdit extends React.Component {
         this.setState({
           breadcrumbs_1: res.data.name,
         });
-      } else {
-        console.log("Failed to update BCs!");
-        console.log(res.data);
       }
     });
   }
@@ -232,8 +190,6 @@ class TrackEdit extends React.Component {
     if (event) {
       album_id = event.value;
       album_title = event.label;
-    } else {
-      console.log("No event in updateAlbum");
     }
     this.setState(
       (prevState) => {
@@ -255,36 +211,24 @@ class TrackEdit extends React.Component {
       artist_id = event.value;
       artist_name = event.label;
     } else {
-      console.log("In the else, which is strange...");
       artist_id = 0;
       artist_name = "Compilation";
     }
-    this.setState(
-      (prevState) => {
-        track = prevState.track;
-        track["artist_id"] = artist_id;
-        track["artist_name"] = artist_name;
-        return { track: track };
-      },
-      () => {
-        // console.log("Artist updated!");
-        // console.log(this.state.track);
-      }
-    );
+    this.setState((prevState) => {
+      track = prevState.track;
+      track["artist_id"] = artist_id;
+      track["artist_name"] = artist_name;
+      return { track: track };
+    });
   };
 
   saveTrack() {
-    // console.log("WE WILL SAVE THIS TRACK:");
-    // console.log(this.state.track);
-    // Post this.state.track to endpoint.
     const postData = {
       track: this.state.track,
       add: this.state.add,
     };
     axios.post(config.get("api_url") + "tracks/save", postData).then((res) => {
       if (res.data.track) {
-        // console.log("SAVED!");
-        // console.log(res.data);
         this.setState((prevState) => {
           var newTrack = prevState.track;
           var instructions =
@@ -301,12 +245,8 @@ class TrackEdit extends React.Component {
             instructions: instructions,
           };
         });
-      } else {
-        // console.log();
       }
     });
-    // Then...
-    // Set behavior based on result.
   }
 
   render() {
@@ -414,15 +354,6 @@ class TrackEdit extends React.Component {
               />
             </Form.Group>
 
-            {/*
-						<Form.Group widths='equal' className={showSpellingClass}>
-							{altSpellingMarkup}
-						</Form.Group>
-						<div id="altSpellingContainer">
-							<Button onClick={this.addAlternateSpelling} circular size='mini' icon='plus'></Button>
-							<p style={{display:"inline", marginLeft: "5px"}}>Add Alternate Spelling</p>
-						</div>
-						*/}
             <Form.Group>
               <Form.Button
                 onClick={(e) => {

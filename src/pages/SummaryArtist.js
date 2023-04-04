@@ -81,7 +81,6 @@ class ArtistSummary extends React.Component {
       };
       this.setState(updatedState2, () => this.queryCustom());
     } else if (init_qv.weeks || init_qv.channel) {
-      // console.log('ELSE 3');
       this.setState(
         {
           // Start out with this state, but also let it be updated later.
@@ -91,7 +90,6 @@ class ArtistSummary extends React.Component {
         () => this.queryForSummary()
       );
     } else {
-      // console.log('TOTAL ELSE');
       this.queryForSummary();
     }
   }
@@ -198,12 +196,6 @@ class ArtistSummary extends React.Component {
   }
 
   queryForSummary() {
-    // 	TUCK IN CALLS TO QUERY CUSTOM HERE!
-    if (this.state.custom_range) {
-      // console.log("AUTOMATICALLY CALLING QUERY CUSTOM...");
-      // return this.queryCustom()
-    }
-
     let queryValues = queryString.parse(this.props.location.search);
     if (queryValues.artist_id) {
       this.setState(
@@ -212,7 +204,7 @@ class ArtistSummary extends React.Component {
           csvExport: [],
         },
         () => {
-          this.renderExportButton(); // BLANK IT OUT, & REPLACE WITH NEW $#!+
+          this.renderExportButton();
           var postData = {
             id: this.state.artist_id,
           };
@@ -251,13 +243,11 @@ class ArtistSummary extends React.Component {
                     }
                   });
                 }
-              ); // Outer wrapper
+              );
             }
           });
         }
       );
-    } else {
-      console.log("We need an artist ID to properly execute!");
     }
   }
 

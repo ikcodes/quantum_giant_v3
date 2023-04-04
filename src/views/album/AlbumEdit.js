@@ -2,13 +2,7 @@ import React from "react";
 import axios from "axios";
 import config from "react-global-configuration";
 import { Link, Redirect } from "react-router-dom";
-import {
-  // Segment,
-  // Icon,
-  Button,
-  Checkbox,
-  Form,
-} from "semantic-ui-react";
+import { Button, Checkbox, Form } from "semantic-ui-react";
 
 import Select from "react-select-virtualized";
 import { DateInput } from "semantic-ui-calendar-react";
@@ -71,18 +65,13 @@ class AlbumEdit extends React.Component {
 
   componentDidMount() {
     if (this.state.add) {
-      // New album! No post.
       this.setState(
         {
           instructions: "Adding new album.",
         },
         () => {
           this.getDropdownArtists();
-          // console.log("Artists in.");
-          // console.log(this.state.all_artists);
           this.getDropdownLabels();
-          // console.log('Labels in, too.');
-          // console.log(this.state.all_labels);
         }
       );
     } else {
@@ -99,16 +88,12 @@ class AlbumEdit extends React.Component {
               instructions: "Now editing album metadata for " + res.data.album["album_title"] + ".",
             },
             () => {
-              // console.log('ALBUM FROM API:');
-              // console.log(res.data.album);
-              // console.log('------------');
               this.getDropdownArtists();
               this.getDropdownLabels();
             }
           );
         } else {
-          console.log(res);
-          console.log("Problem getting album!!");
+          console.log("Problem getting album!", res);
         }
       });
     }
@@ -122,8 +107,6 @@ class AlbumEdit extends React.Component {
       album: this.state.album,
       add: this.state.add,
     };
-    console.log("Postdata going to API:");
-    console.log(postData);
     const debug = false;
     if (this.state.album["album_title"] && debug === false) {
       axios.post(config.get("api_url") + "albums/update-album", postData).then((res) => {
@@ -147,14 +130,9 @@ class AlbumEdit extends React.Component {
             toListView: true, // Either redirect on exit or force reload w/ ID
             toListViewUrl: "/albums/" + backTo,
           });
-        } else {
-          console.log("BAD RESPONSE!");
-          console.log(res);
         }
       });
     } else {
-      console.log("BAILING OUT! PostData:");
-      console.log(postData);
       this.setState({
         instructions: "Failed to update album!",
         add: 0,
@@ -167,20 +145,14 @@ class AlbumEdit extends React.Component {
   getDropdownArtists() {
     axios.get(config.get("api_url") + "artists/load-for-dropdown").then((res) => {
       if (res.data.artists !== undefined) {
-        this.setState(
-          {
-            all_artists: res.data.artists.map((artist) => {
-              return {
-                value: artist["artist_id"],
-                label: artist["artist_name"],
-              };
-            }),
-          },
-          () => {
-            // console.log("WE HAVE ARTISTS:");
-            // console.log(this.state.all_artists);
-          }
-        );
+        this.setState({
+          all_artists: res.data.artists.map((artist) => {
+            return {
+              value: artist["artist_id"],
+              label: artist["artist_name"],
+            };
+          }),
+        });
       }
     });
   }
@@ -189,22 +161,15 @@ class AlbumEdit extends React.Component {
   //---------------------------------------------------
   getDropdownLabels() {
     axios.get(config.get("api_url") + "albums/labels-for-dropdown").then((res) => {
-      console.log(res);
       if (res.data.labels !== undefined) {
-        this.setState(
-          {
-            all_labels: res.data.labels.map((label) => {
-              return {
-                value: label["label_id"],
-                label: label["label_name"],
-              };
-            }),
-          },
-          () => {
-            // console.log("WE HAVE LABELS!");
-            // console.log(this.state.all_labels);
-          }
-        );
+        this.setState({
+          all_labels: res.data.labels.map((label) => {
+            return {
+              value: label["label_id"],
+              label: label["label_name"],
+            };
+          }),
+        });
       }
     });
   }
@@ -217,14 +182,9 @@ class AlbumEdit extends React.Component {
     const name = target.name;
     const currAlbum = this.state.album;
     currAlbum[name] = value;
-    this.setState(
-      {
-        album: currAlbum, // New object with updated property.
-      },
-      () => {
-        // console.log(this.state.album);
-      }
-    );
+    this.setState({
+      album: currAlbum, // New object with updated property.
+    });
   }
 
   toggleCompilation = () => {
@@ -246,7 +206,6 @@ class AlbumEdit extends React.Component {
   };
 
   updateArtist = (event) => {
-    // console.log("UPDATING ARTIST!");
     let album, artist_id, artist_name;
     if (event) {
       artist_id = event.value;
@@ -255,22 +214,15 @@ class AlbumEdit extends React.Component {
       artist_id = 0;
       artist_name = "Compilation";
     }
-    this.setState(
-      (prevState) => {
-        album = prevState.album;
-        album["artist_id"] = artist_id;
-        album["artist_name"] = artist_name;
-        return { album: album };
-      },
-      () => {
-        // console.log(this.state.album);
-      }
-    );
+    this.setState((prevState) => {
+      album = prevState.album;
+      album["artist_id"] = artist_id;
+      album["artist_name"] = artist_name;
+      return { album: album };
+    });
   };
 
   updateLabel = (event) => {
-    console.log("UPDATING LABEL!");
-    console.log(event);
     let album, label_id, label_name;
     if (event) {
       label_id = event.value;
@@ -279,35 +231,22 @@ class AlbumEdit extends React.Component {
       label_id = 0;
       label_name = "No Label";
     }
-    this.setState(
-      (prevState) => {
-        // console.log('SETTING THIS as LABEL ID:' + label_id);
-        album = prevState.album;
-        album["label_id"] = label_id;
-        album["label_name"] = label_name;
-        return { album: album };
-      },
-      () => {
-        // console.log('Label set:');
-        // console.log(this.state.album);
-      }
-    );
+    this.setState((prevState) => {
+      album = prevState.album;
+      album["label_id"] = label_id;
+      album["label_name"] = label_name;
+      return { album: album };
+    });
   };
 
   addAlternateRelease() {
-    this.setState(
-      (prevState) => {
-        var newAlbum = prevState.album;
-        newAlbum.alt_release_dates.push("");
-        return {
-          album: newAlbum,
-        };
-      },
-      () => {
-        console.log("state after adding:");
-        // console.log(this.state);
-      }
-    );
+    this.setState((prevState) => {
+      var newAlbum = prevState.album;
+      newAlbum.alt_release_dates.push("");
+      return {
+        album: newAlbum,
+      };
+    });
   }
 
   handleReleaseDate = (event, { name, value }) => {
@@ -323,8 +262,6 @@ class AlbumEdit extends React.Component {
     this.setState((prevState) => {
       let currAlbum = prevState.album;
       if (name === "alt_release_dates[0]") {
-        // This would get out of hand if we used more than 4 ALTERNATES.
-        console.log("we got it!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         currAlbum.alt_release_dates[0] = value;
       } else if (name === "alt_release_dates[1]") {
         currAlbum.alt_release_dates[1] = value;
@@ -332,9 +269,6 @@ class AlbumEdit extends React.Component {
         currAlbum.alt_release_dates[2] = value;
       } else if (name === "alt_release_dates[3]") {
         currAlbum.alt_release_dates[3] = value;
-      } else {
-        console.log("hit ELSE");
-        // currAlbum[name] = value;
       }
       return { album: currAlbum };
     });
@@ -355,7 +289,6 @@ class AlbumEdit extends React.Component {
         <div className='field' key={index}>
           <label>Release Date</label>
           <DateInput
-            // key={ index }
             animation='none'
             autoComplete='off'
             dateFormat='YYYY-MM-DD'

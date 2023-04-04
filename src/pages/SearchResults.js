@@ -230,7 +230,7 @@ class SearchResults extends React.Component {
                 <Table.Row style={displayPagination}>
                   <Table.HeaderCell textAlign='center' colSpan={6}>
                     <Menu compact secondary size='mini'>
-                      <Menu.Item as='a' icon onClick={() => console.log("Click backward")}>
+                      <Menu.Item as='a'>
                         <Icon name='chevron left' />
                       </Menu.Item>
                       {this.state.pagination.map((pageNum) => {
@@ -245,7 +245,7 @@ class SearchResults extends React.Component {
                           </Menu.Item>
                         );
                       })}
-                      <Menu.Item as='a' icon onClick={() => console.log("Click forward")}>
+                      <Menu.Item as='a' icon>
                         <Icon name='chevron right' />
                       </Menu.Item>
                     </Menu>

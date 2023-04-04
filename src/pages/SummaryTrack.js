@@ -173,8 +173,6 @@ class TrackSummary extends React.Component {
     return weekInt === 0 ? "This Week" : weekInt === 1 ? "Last Week" : "Last " + weekInt + " weeks";
   }
 
-  // CONVERT to just creating a URL to hit the API endpoint
-
   renderExportButton() {
     if (this.state.csvExport.length > 1) {
       // Must be a blank object to avoid crashing the plugin onload. Thus, length = 1. Re-render when this changes.

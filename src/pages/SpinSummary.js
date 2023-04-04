@@ -8,7 +8,6 @@ import ChannelFiltering from "../components/ChannelFiltering";
 import DateFiltering from "../components/DateFiltering";
 import TableActionButton from "../components/TableActionButton";
 import { Button, Segment, Table, Icon, Label, Radio, Input } from "semantic-ui-react";
-
 import { CSVLink } from "react-csv";
 
 class SpinSummary extends React.Component {
@@ -39,17 +38,12 @@ class SpinSummary extends React.Component {
     this.renderExportButton = this.renderExportButton.bind(this);
     this.activateCustomDates = this.activateCustomDates.bind(this);
     this.deactivateCustomDates = this.deactivateCustomDates.bind(this);
-
-    // this.updateWeek = this.updateWeek.bind(this);
-    // this.updateSpinSummary = this.updateSpinSummary.bind(this);
   }
   componentDidMount() {
     const init_qv = queryString.parse(this.props.location.search);
     if (init_qv.weeks_back || init_qv.channel) {
-      // console.log(init_qv.weeks_back);
       this.setState(
         {
-          // Start out with this state, but also let it be updated later.
           channel: parseInt(init_qv.channel) || this.state.channel,
           weeks_back:
             parseInt(init_qv.weeks_back) >= 0
@@ -59,8 +53,6 @@ class SpinSummary extends React.Component {
         () => {
           this.updateSpinSummary();
           let wb_text = this.convertWeekToText(this.state.weeks_back);
-          // console.log("This should be going now...");
-          // console.log(wb_text);
           this.setState({
             weeks_back_text: wb_text,
           });
@@ -90,7 +82,6 @@ class SpinSummary extends React.Component {
 
   deactivateCustomDates() {
     var weekText = this.convertWeekToText(this.state.weeks_back);
-    console.log("Deactivating. Here is week text:");
     this.setState(
       {
         custom_range: false,
@@ -144,8 +135,6 @@ class SpinSummary extends React.Component {
 
         axios.post(config.get("api_url") + "spin-summary/summary", postData).then((res) => {
           if (res.data.summary) {
-            // console.log('File will be named:');
-            // console.log(res.data.csv_filename);
             this.setState(
               {
                 spinCount: res.data.summary.spin_ct,
@@ -159,8 +148,7 @@ class SpinSummary extends React.Component {
               }
             );
           } else {
-            console.log("Could not get stuff!!!! No res.data.summary!");
-            console.log(res.data);
+            console.log("Failed to produce a summary!", res.data);
           }
         });
       }
@@ -185,8 +173,6 @@ class SpinSummary extends React.Component {
           channel: this.state.channel,
         };
 
-        console.log(postData);
-
         axios.post(config.get("api_url") + "spin-summary/summary-custom", postData).then((res) => {
           if (res.data.summary) {
             this.setState(
@@ -202,8 +188,7 @@ class SpinSummary extends React.Component {
               }
             );
           } else {
-            console.log("Could not get stuff!!!! No res.data.summary!");
-            console.log(res.data);
+            console.log("Failed to produce a summary!", res.data);
           }
         });
       }
@@ -278,7 +263,6 @@ class SpinSummary extends React.Component {
       },
       () => {
         this.updateSpinSummary(selectedWeek);
-        // console.log("Value, then State"); console.log(value); console.log(this.state);
       }
     );
   };

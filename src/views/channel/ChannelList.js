@@ -1,20 +1,9 @@
 import React from "react";
 import axios from "axios";
-// import { Link } from 'react-router-dom';
 import config from "react-global-configuration";
-import {
-  Button,
-  Table,
-  // Icon,
-  // Menu,
-  // Popup,
-  // Segment,
-  // Tab,
-} from "semantic-ui-react";
-
+import { Button, Table } from "semantic-ui-react";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-
 import PageHeader from "../../components/PageHeader";
 import AddButton from "../../components/AddButton";
 import TableActionButton from "../../components/TableActionButton";
@@ -44,14 +33,9 @@ class ChannelList extends React.Component {
 
   componentDidMount() {
     axios.get(config.get("api_url") + "channels/load").then((res) => {
-      this.setState(
-        {
-          channels: res.data.channels,
-        },
-        () => {
-          // console.log(this.state)
-        }
-      );
+      this.setState({
+        channels: res.data.channels,
+      });
     });
   }
 

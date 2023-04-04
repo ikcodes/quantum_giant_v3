@@ -16,8 +16,7 @@ class ChannelFiltering extends React.Component {
     axios.get(config.get("api_url") + "channels/load-for-dropdown").then((res) => {
       const channels = res.data.channels;
       this.setState({ channels: channels }, () => {
-        console.log("Channel filtering from API:");
-        console.log(this.state.channels);
+        console.log("Channel filtering from API:", this.state.channels);
       });
     });
   }

@@ -2,16 +2,7 @@ import React from "react";
 import axios from "axios";
 import config from "react-global-configuration";
 import { Link, Redirect } from "react-router-dom";
-import {
-  // Segment,
-  // Icon,
-  // Button,
-  Radio,
-  Input,
-  Form,
-  Table,
-} from "semantic-ui-react";
-
+import { Radio, Input, Form, Table } from "semantic-ui-react";
 import PageHeader from "../../components/PageHeader";
 
 //=======================================
@@ -82,8 +73,6 @@ class ChannelEdit extends React.Component {
               this.testChannel(); // TEST ONLOAD : This shows a 'now playing' block, which (WILL BE) REQUIRED for SAVE
             }
           );
-        } else {
-          console.log("Problem getting channel!!");
         }
       });
     }
@@ -184,41 +173,31 @@ class ChannelEdit extends React.Component {
     const currChannel = this.state.channel;
     currChannel[name] = value;
 
-    this.setState(
-      {
-        channel: currChannel, // New object with updated property.
-      },
-      () => {
-        // console.log(this.state.channel);
-      }
-    );
+    this.setState({
+      channel: currChannel, // New object with updated property.
+    });
   }
 
   updateChannelNumber(e) {
     const channelNumber = parseInt(e.target.value);
-    // if(newWeek >= 0 && newWeek <= 26){	// Enforce this range
     if (channelNumber >= 0) {
       var tempChan = this.state.channel;
       tempChan["channel_number"] = channelNumber;
       this.setState({
         channel: tempChan,
-        // }, () => console.log(this.state));
       });
     }
   }
 
   updateWebChannel(e, { value }) {
-    console.log(value);
     var tempChan = this.state.channel;
     tempChan["web"] = parseInt(value);
     this.setState({
       channel: tempChan,
-      // }, () => console.log(this.state))
     });
   }
 
   render() {
-    // Only take out for dev
     if (this.state.toListView === true) {
       return <Redirect to={this.state.toListViewUrl || "/channels"} />;
     }
@@ -232,7 +211,8 @@ class ChannelEdit extends React.Component {
           iconName='user'
           breadcrumbs_1={this.state.breadcrumbs_1}
           breadcrumbs_2={this.state.breadcrumbs_2}
-          // instructions={this.state.instructions}
+          // This was commented out...
+          instructions={this.state.instructions}
         />
 
         {/*==============*/}

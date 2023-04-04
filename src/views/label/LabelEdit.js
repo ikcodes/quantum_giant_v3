@@ -2,16 +2,7 @@ import React from "react";
 import axios from "axios";
 import config from "react-global-configuration";
 import { Link, Redirect } from "react-router-dom";
-import {
-  Form,
-  // Segment,
-  // Icon,
-  // Button,
-  // Radio,
-  // Input,
-  // Table,
-} from "semantic-ui-react";
-
+import { Form } from "semantic-ui-react";
 import PageHeader from "../../components/PageHeader";
 
 //=======================================
@@ -73,8 +64,6 @@ class ChannelEdit extends React.Component {
             breadcrumbs_1: res.data.label["label_name"],
             instructions: "Now editing label metadata for " + res.data.label["label_name"] + ".",
           });
-        } else {
-          console.log("Problem getting label!!");
         }
       });
     }

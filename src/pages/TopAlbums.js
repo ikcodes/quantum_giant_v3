@@ -129,8 +129,7 @@ class TopAlbums extends React.Component {
               }
             );
           } else {
-            console.log("Could not get stuff!!!! No res.data.summary!");
-            console.log(res.data);
+            console.log("Failed to produce summary!", res.data);
           }
         });
       }

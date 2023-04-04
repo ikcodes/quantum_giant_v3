@@ -138,11 +138,6 @@ class AlbumSummary extends React.Component {
   };
 
   queryCustom() {
-    // if(!this.state.custom_dates.start.length){
-    // 	alert('Please select at least a start date!');
-    // 	return;
-    // }
-
     let queryValues = queryString.parse(this.props.location.search);
     if (queryValues.album_id) {
       this.setState(
@@ -151,7 +146,7 @@ class AlbumSummary extends React.Component {
           csvExport: [],
         },
         () => {
-          this.renderExportButton(); // BLANK IT OUT, & REPLACE WITH NEW $#!+
+          this.renderExportButton(); // Exports regenerate on render, to ensure 1:1 data
           var postData = {
             id: this.state.album_id,
           };
@@ -160,8 +155,6 @@ class AlbumSummary extends React.Component {
               this.setState(
                 {
                   album_title: res.data.name,
-
-                  // HO BOY
                   artist_id: res.data.artist_id,
                   artist_name: res.data.artist_name,
                   breadcrumbs_1: res.data.artist_name,
@@ -181,8 +174,6 @@ class AlbumSummary extends React.Component {
                     .then((res) => {
                       let newWeekText = this.convertWeeksToText(this.state.weeks_shown);
                       if (res.data) {
-                        // console.log("CSV from api:");
-                        // console.log(res.data.csv);
                         this.setState(
                           {
                             summary: res.data,
@@ -195,7 +186,6 @@ class AlbumSummary extends React.Component {
                           }
                         );
                       } else {
-                        console.log("NO RES DATA! BOO :(");
                         this.setState({
                           loading: false,
                           error: true,
@@ -203,9 +193,7 @@ class AlbumSummary extends React.Component {
                       }
                     });
                 }
-              ); // Outer wrapper
-            } else {
-              console.log("DID NOT GET SUFFICIENT ALBUM TITLE INFO! BAILEN OUT!");
+              );
             }
           });
         }
@@ -214,12 +202,6 @@ class AlbumSummary extends React.Component {
   }
 
   queryForSummary() {
-    // 	TUCK IN CALLS TO QUERY CUSTOM HERE!
-    if (this.state.custom_range) {
-      // console.log("AUTOMATICALLY CALLING QUERY CUSTOM...");
-      // return this.queryCustom()
-    }
-
     let queryValues = queryString.parse(this.props.location.search);
     if (queryValues.album_id) {
       this.setState(
@@ -228,7 +210,7 @@ class AlbumSummary extends React.Component {
           csvExport: [],
         },
         () => {
-          this.renderExportButton(); // BLANK IT OUT, & REPLACE WITH NEW $#!+
+          this.renderExportButton();
           var postData = {
             id: this.state.album_id,
           };
@@ -280,7 +262,7 @@ class AlbumSummary extends React.Component {
                     }
                   });
                 }
-              ); // Outer wrapper
+              );
             }
           });
         }

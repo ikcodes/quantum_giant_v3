@@ -98,9 +98,6 @@ class DanSummary extends React.Component {
                 this.renderExportButton();
               }
             );
-          } else {
-            console.log("Could not get stuff!!!! No res.data.summary!");
-            console.log(res.data);
           }
         });
       }

@@ -7,7 +7,7 @@ import DateFiltering from "../components/DateFiltering";
 import ChannelFiltering from "../components/ChannelFiltering";
 import {
   Button,
-  // Checkbox,
+  Checkbox,
   Form,
   Segment,
   Icon,
@@ -25,6 +25,7 @@ class Search extends React.Component {
         channel: "",
         start_date: "",
         end_date: "",
+        include_web: false,
       },
       disableButton: true, // Have to have criteria!
     };
@@ -32,6 +33,7 @@ class Search extends React.Component {
     this.handleEndDate = this.handleEndDate.bind(this);
     this.searchForSpins = this.searchForSpins.bind(this);
     this.handleChannels = this.handleChannels.bind(this);
+    this.handleIncludeWeb = this.handleIncludeWeb.bind(this);
     this.handleStartDate = this.handleStartDate.bind(this);
     this.parseQueryString = this.parseQueryString.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -51,15 +53,11 @@ class Search extends React.Component {
         this.state.params.start_date === "" &&
         this.state.params.end_date === "") ||
       this.state.params === {};
-    console.log("MANAGING DISABLE ==> " + disableButton);
-    console.log(this.state.params);
     return disableButton;
   }
 
   parseQueryString() {
     let queryValues = queryString.parse(decodeURI(this.props.location.search));
-    console.log("Query Values passed:");
-    console.log(queryValues);
     if (Object.keys(queryValues).length !== 0) {
       // ONLY OVERWRITE QUERY VALUES IF ANY ARE PASSED
       this.setState(
@@ -76,7 +74,6 @@ class Search extends React.Component {
               })
               .then((res) => {
                 if (res.data.name) {
-                  console.log(res.data.name);
                   this.setState((prevState) => {
                     let params = prevState["params"];
                     params["artist_name"] = res.data.name;
@@ -84,8 +81,6 @@ class Search extends React.Component {
                       params: params,
                     };
                   });
-                } else {
-                  console.log("No artist matched.");
                 }
               });
           }
@@ -96,7 +91,6 @@ class Search extends React.Component {
               })
               .then((res) => {
                 if (res.data.title) {
-                  console.log(res.data.title);
                   this.setState((prevState) => {
                     let params = prevState["params"];
                     params["track_title"] = res.data.title;
@@ -105,8 +99,6 @@ class Search extends React.Component {
                       params: params,
                     };
                   });
-                } else {
-                  console.log("No title matched.");
                 }
               });
           }
@@ -133,6 +125,9 @@ class Search extends React.Component {
     if (this.state.params.track_title) {
       url += "track_title=" + encodeURI(this.state.params.track_title) + "&";
     }
+    if (this.state.params.include_web) {
+      url += "include_web=true&";
+    }
     if (url.length) {
       const finalUrl = url.slice(0, -1);
       this.setState({
@@ -150,7 +145,6 @@ class Search extends React.Component {
     this.setState((state) => {
       const params = state.params;
       params[name] = value;
-      console.log("handleInputChange");
       return {
         params: params,
       };
@@ -162,7 +156,6 @@ class Search extends React.Component {
     this.setState((prevState) => {
       params = prevState.params;
       params["start_date"] = value;
-      console.log("handleStartDate");
       return { params: params };
     });
   };
@@ -172,13 +165,11 @@ class Search extends React.Component {
     this.setState((prevState) => {
       params = prevState.params;
       params["end_date"] = value;
-      console.log("handleEndDate");
       return { params: params };
     });
   };
 
   handleChannels = (event, { name, value }) => {
-    console.log("handleChannels");
     if (event) {
       const channelId = event.value;
       let params;
@@ -191,12 +182,19 @@ class Search extends React.Component {
       this.setState((state) => {
         let params = state.params;
         delete params.channel;
-        console.log("DELETING PARAMS CHANNEL!");
         return {
           params: params,
         };
       });
     }
+  };
+
+  handleIncludeWeb = () => {
+    this.setState((prevState) => {
+      let params = prevState.params;
+      params.include_web = !params.include_web;
+      return { params: params };
+    });
   };
 
   render() {
@@ -268,6 +266,24 @@ class Search extends React.Component {
                       onChange={this.handleEndDate}
                       value={this.state.params["end_date"]}
                     />
+                  </div>
+                </div>
+
+                {/* INCLUDE WEB SPINS? */}
+                <div className='cell medium-6'>
+                  <div className='field'>
+                    {/* <label style={{ marginTop: 15 }}>Include Web Spins</label> */}
+                    <Checkbox
+                      checked={this.state.params.include_web}
+                      style={{ marginTop: 15 }}
+                      label='Include Web Spins'
+                      onClick={this.handleIncludeWeb}
+                    />
+                    {/* <Select
+                      value={this.state.params.include_web ? "Yes" : "No"}
+                      options={["No", "Yes"]}
+                      onChange={this.handleIncludeWeb}
+                    */}
                   </div>
                 </div>
               </div>

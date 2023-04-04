@@ -61,10 +61,10 @@ if($ACTION === 'get-spins'){
 		}
 	}
 	
-	//============================
+	//=================================
 	// PATH 3. SIMPLE TEXT MATCH.
-	// Also used for channel schedules! (?)
-	//============================
+	// Also used for channel schedules
+	//=================================
 	elseif( 
 		!empty($_POST['artist_name']) or 
 		!empty($_POST['track_title']) or
@@ -398,7 +398,7 @@ function buildSimpleQuery($args){	// artist_name, track_title
 	}
 	
 	$table = getTable($args);
-	// Is there a reason we DO want SSF here?
+
 	$sql = 'SELECT * FROM '.$table.' perfs WHERE '.implode(' AND ', $fields);
 	// $sql = 'SELECT * FROM '.$table.' perfs WHERE perfs.channel <> 106 AND '.implode(' AND ', $fields);
 	$query = array(
@@ -527,6 +527,11 @@ function addFilters($args, $mode){	// channel, start_date, end_date
 			$filters[] = intval($args['channel']);	// Risky?
 		}
 	}
+
+
+	// START HERE: implement more robust solution
+	// Post body submits include_web=true if we want them 
+	// If not, exclude.
 	
 	// Exclude She's So Funny spins from Web channel!
 	// This needs a more robust solution.

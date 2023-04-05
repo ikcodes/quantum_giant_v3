@@ -4,7 +4,7 @@
 
 =====================================*/
 
-if($ACTION == 'load'){	// GET req
+if($ACTION == 'load'){
 	$cm = new Model('sxm_channels');
 	$channels = $cm->get_items(array('order' => 'channel_number'));
 	$res = array(
@@ -12,10 +12,15 @@ if($ACTION == 'load'){	// GET req
 	);
 }
 
+// Dropdown dynamically pulls the current list of channels 
 if($ACTION == 'load-for-dropdown'){
 	$cm = new Model('sxm_channels');
-	$channels = $cm->get_items(array('order' => 'channel_number'));
-	$ret_chans = array();
+	$channels = $cm->get_items(
+		array(
+			'where' => 'active=1', 
+			'order' => 'channel_name'
+		)
+	);
 	$ret_chans[] = array(
 		'key' => 0,
 		'value' => 0,

@@ -66,21 +66,8 @@ function getSpinSummary($between, $channel = 0){	// $time = array( 'clause', 'pa
 				$artist_sql .= " AND channel = ?";
 				array_push($artist_params, $channel);
 			}
-			
-			// EXCLUDE She's so funny web channel
-			$artist_sql .= ' AND channel <> ?';
-			array_push($artist_params, 106);
-			
-			// EXCLUDE Comedy Classics... over WHAT PERIOD(?!?!?)	// No !!! just the nulls
-			// $artist_sql .= ' AND channel <> ?';
-			// array_push($artist_params, 104);
-			
-			// ALSO EXCLUDE Netflix Is A Joke
-			$artist_sql .= ' AND channel <> ?';
-			array_push($artist_params, 93);
-			
-			$artist_sql .= ' AND channel IS NOT NULL';
-			// array_push($artist_params, Null);	/// Nooooooot sure how this would work...
+
+			$artist_sql .= excludeChannelSql(); // Includes space before next 'AND'
 			
 			// Get 
 			if(!empty($artist_params) && (strpos($artist_sql, '( AND )') == false)){
@@ -99,6 +86,8 @@ function getSpinSummary($between, $channel = 0){	// $time = array( 'clause', 'pa
 						'artist_name' => $artist['artist_name'],
 						'spin_ct' => sizeof($artist_spins),
 						
+						// Debuggery
+
 						// 'sql' => $artist_sql,
 						// 'params' => $artist_params,
 						// 'spins' => $artist_spins,

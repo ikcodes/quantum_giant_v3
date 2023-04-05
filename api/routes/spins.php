@@ -391,8 +391,13 @@ function buildSimpleQuery($args){
 	
 	$table = getTable($args);
 
-	$sql = 'SELECT * FROM '.$table.' perfs WHERE '.implode(' AND ', $fields);
-	// $sql = 'SELECT * FROM '.$table.' perfs WHERE perfs.channel <> 106 AND '.implode(' AND ', $fields);
+	// Exclude web channels for ALL dynamic queries unless a channel is specifically passed (ex: channel schedule for web channel)
+	if(isset($args['channel'])){
+		$sql = 'SELECT * FROM '.$table.' perfs WHERE '.implode(' AND ', $fields);
+	}else{
+		$sql = 'SELECT * FROM '.$table.' perfs WHERE '.implode(' AND ', $fields) . excludeChannelSql();
+	}
+
 	$query = array(
 		'sql' => $sql,
 		'params' => $params,

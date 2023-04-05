@@ -85,7 +85,7 @@ function excludeChannelSql(){
 	foreach($chans as $chan){
 		$disregard_chans[] = $chan['channel_number'];
 	}
-	$sql = "AND channel <> " . implode($disregard_chans, " AND channel <> ") . " AND channel IS NOT NULL";
+	$sql = " AND channel <> " . implode($disregard_chans, " AND channel <> ") . " AND channel IS NOT NULL";
 	return $sql;
 }
 

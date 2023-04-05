@@ -40,8 +40,10 @@ if($ACTION == 'track-custom' || $ACTION == 'artist-custom' || $ACTION == 'album-
 	// Build query
 	$between_stuff = getBetweenCustom($start_date, $end_date);
 	$channel_sql = !empty($channel) ? 'AND channel=?' : '';
-	// Omit she's so funny web channel
-	$custom_sql = $sql . $query_prep['clause'] . ' AND ' . $between_stuff['clause'] .' '.$channel_sql.' AND channel <> 106 AND channel <> 93 AND channel is not null ORDER BY timestamp_utc DESC';
+
+	// Build SQL statment - exclude web spins
+	$custom_sql = $sql . $query_prep['clause'] . ' AND ' . $between_stuff['clause'] .' '.$channel_sql. excludeChannelSql() . ' ORDER BY timestamp_utc DESC';
+
 	$params = array_merge($query_prep['params'], $between_stuff['params']);
 	if(!empty($channel)){	// Only query for channel if passed.
 		array_push($params, $channel);
@@ -122,16 +124,13 @@ if($ACTION == 'artist' || $ACTION == 'album' || $ACTION == 'track'){
 	$weeks = range(0, $weeks_shown);
 	$chartData = array();
 	
-	// Exclude web channels from this data set.
-	$exclude_chan_sql = excludeChannelSql();	// THIS STARTS WITH 'AND' ... BECAUSE IT CAN ALSO BE BLANK. FUNCTION HANDLES INCLUSION
-	
 	// Find timestamp & query for this week.
 	foreach($weeks as $week){
 		$between_stuff = getBetweenClause($week);
 		$channel_sql = !empty($channel) ? 'AND channel=?' : '';
 		
 		// Omit she's so funny web channel AND Netflix is a Joke
-		$this_weeks_sql = $sql . $query_prep['clause'] . ' AND ' . $between_stuff['clause'] .' '.$channel_sql.' '.$exclude_chan_sql.' ORDER BY timestamp_utc DESC';
+		$this_weeks_sql = $sql . $query_prep['clause'] . ' AND ' . $between_stuff['clause'] .' '.$channel_sql.' '. excludeChannelSql() .' ORDER BY timestamp_utc DESC';
 		
 		$this_weeks_params = array_merge($query_prep['params'], $between_stuff['params']);
 		if(!empty($channel)){	// Only query for channel if passed.

@@ -129,7 +129,7 @@ if($ACTION == 'artist' || $ACTION == 'album' || $ACTION == 'track'){
 		$between_stuff = getBetweenClause($week);
 		$channel_sql = !empty($channel) ? 'AND channel=?' : '';
 		
-		// Omit she's so funny web channel AND Netflix is a Joke
+		// Build this week's SQL
 		$this_weeks_sql = $sql . $query_prep['clause'] . ' AND ' . $between_stuff['clause'] .' '.$channel_sql.' '. excludeChannelSql() .' ORDER BY timestamp_utc DESC';
 		
 		$this_weeks_params = array_merge($query_prep['params'], $between_stuff['params']);

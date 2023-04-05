@@ -1,4 +1,8 @@
-<?php
+<?php /*=============================//
+
+/api/label/{$ACTION}
+
+=====================================*/
 
 if($ACTION == 'list'){
 	$sm = new Model('labels');
@@ -78,6 +82,8 @@ function getLabelByID($l_id){
 
 
 function getLabelSummary($post, $csv = false){
+
+	$SPINS_PER_PAGE = 1000;	// TODO: On-page pagination? 
 	
 	// DECODE POST
 	$DOING_CUSTOM = false;
@@ -97,9 +103,8 @@ function getLabelSummary($post, $csv = false){
 	}
 	
 	// Pagination, baby.
-	$slice_len = 100;
 	$slice_start = isset($post['slice_start']) ? intval($post['slice_start']) : 0;
-	$slice_end = $slice_start + $slice_len;
+	$slice_end = $slice_start + $SPINS_PER_PAGE;
 	
 	// INIT VARS FOR LOOP
 	$upper_bound = 0;
@@ -115,11 +120,36 @@ function getLabelSummary($post, $csv = false){
 	
 	$artist_spellings = getArtistsByLabel($label_id);
 	$track_spellings = getTracksByLabel($label_id);
-	
+
+	//----------------------------------------------------------------
+	// BUILD QUERY |  new format as of 04.2023
+	// Prevent duplicates by segragating queries by particular album.
+	//----------------------------------------------------------------
+	$label_album_ids = getAlbumIdsByLabel($label_id);
+	$master_clause = array();
+	$master_params = array();
+	foreach($label_album_ids as $id){
+		$this_wc = whereClauseForAlbum($id);
+		$this_params = $this_wc['params'];
+		$this_clause = $this_wc['clause'];
+		// echo "Got params! ===> ";
+		// var_dump($this_params);
+		// echo "Got a clause! ===> ";
+		// var_dump($this_clause); die;
+		$master_clause[] = $this_clause;
+		$master_params[] = $this_params;
+	}
+
+	// Ex:  [ artist_1, title_1, title_2, artist_3, title_4, title_5 ]
+	$all_album_params = flatten($master_params);
+	// Ex:  ( (artist=?) AND (title=? OR title=?)) OR ( (artist=?) AND (title=? OR title=?) )
+	$all_album_clause = " ( " . implode(" ) OR ( " , flatten($master_clause))." ) ";
+
 	if($DOING_CUSTOM){
 		
-		$channel_sql = (!empty($channel) ? ' AND channel=? ' : '') . excludeChannelSql();
 		$between_sql = "( timestamp_utc BETWEEN ? AND ? )";
+		$channel_sql = (!empty($channel) ? ' AND channel=? ' : '');
+		/*
 		$custom_sql = "SELECT * 
 									 FROM $table 
 									 WHERE artist 
@@ -128,8 +158,17 @@ function getLabelSummary($post, $csv = false){
 										AND ".$between_sql . $channel_sql . " 
 										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
 										ORDER BY timestamp_utc desc";
-
 		$custom_params = array_merge($artist_spellings, $track_spellings, array($start_ts, $end_ts));
+		*/
+		$custom_sql =  "SELECT * 
+										FROM $table 
+										WHERE $all_album_clause 
+										AND ". $between_sql . $channel_sql ."
+										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
+										ORDER BY timestamp_utc DESC";
+		
+		$custom_params = array_merge($all_album_params, array($start_ts, $end_ts));
+
 		$res['SQL'] = $custom_sql;
 		$res['Params'] = $custom_params;
 		if(!empty($channel) && $channel != 0){
@@ -140,18 +179,37 @@ function getLabelSummary($post, $csv = false){
 		
 	}else{
 		foreach($weeks as $week){	// Weekly queries so we can create the graph
-			/* ORDER OF PARAMS: 
-					- artists
-					- titles
-					- timestamps
-					- channels ( optional )
-			*/
+
 			$between_stuff = getBetweenClause($week, 0, 1);
-			$channel_sql = ( !empty($channel) ? ' AND channel=? ' : '' ) . excludeChannelSql();
-			$tw_sql = "SELECT * FROM $table WHERE artist IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? )  AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) AND ".$between_stuff['clause'] . $channel_sql . " ORDER BY timestamp_utc desc";
-			$tw_params = array_merge($artist_spellings, $track_spellings, $between_stuff['params']);
-			if(!empty($channel)){ $tw_params[] = $channel; }
+			$channel_sql = ( !empty($channel) ? ' AND channel=? ' : '' );
+			
+			$tw_sql =  "SELECT * 
+									FROM $table 
+									WHERE $all_album_clause
+										AND ".$between_stuff['clause'] . $channel_sql ." 
+										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
+										ORDER BY timestamp_utc desc";
+			/*
+			$tw_sql =  "SELECT * 
+									FROM $table 
+									WHERE artist 
+										IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? )  
+										AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) 
+										AND ".$between_stuff['clause'] . $channel_sql . " 
+										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
+										ORDER BY timestamp_utc desc";
+										$tw_params = array_merge($artist_spellings, $track_spellings, $between_stuff['params']);
+			*/
+
+			// FIRE THIS WEEK'S QUERY
+			$tw_params = array_merge($all_album_params, $between_stuff['params']);
+			if(!empty($channel)){
+				$tw_params[] = $channel;
+			}
+
 			$tw_spins = $sm->db->fetch($tw_sql, $tw_params);
+
+			// GRAPH STUFF
 			$upper_bound = (sizeof($tw_spins) <=> $upper_bound ) === 1 ? sizeof($tw_spins) : $upper_bound;
 			$weektext = getWeektext($week);	// Returns a string for the graph
 			$tw_chartdata = array(
@@ -222,6 +280,12 @@ function getLabelSummary($post, $csv = false){
 			$res['spins'] = $spins;	// Detail table
 	}
 	return $res;
+}
+
+function getAlbumIdsByLabel($label_id){
+	$m = new Model('our_albums');
+	$album_ids = $m->db->fetch_value("SELECT GROUP_CONCAT(album_id) FROM our_albums WHERE label_id=?", array($label_id));
+	return explode(",", $album_ids);
 }
 
 function getArtistsByLabel($label_id){

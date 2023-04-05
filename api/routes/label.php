@@ -118,9 +118,6 @@ function getLabelSummary($post, $csv = false){
 	$sm = new Model($table);
 	$sql = 'SELECT * FROM ' . $table;
 	
-	$artist_spellings = getArtistsByLabel($label_id);
-	$track_spellings = getTracksByLabel($label_id);
-
 	//----------------------------------------------------------------
 	// BUILD QUERY |  new format as of 04.2023
 	// Prevent duplicates by segragating queries by particular album.
@@ -130,47 +127,29 @@ function getLabelSummary($post, $csv = false){
 	$master_params = array();
 	foreach($label_album_ids as $id){
 		$this_wc = whereClauseForAlbum($id);
-		$this_params = $this_wc['params'];
-		$this_clause = $this_wc['clause'];
-		// echo "Got params! ===> ";
-		// var_dump($this_params);
-		// echo "Got a clause! ===> ";
-		// var_dump($this_clause); die;
-		$master_clause[] = $this_clause;
-		$master_params[] = $this_params;
+		$master_clause[] = $this_wc['clause'];
+		$master_params[] = $this_wc['params'];
 	}
 
 	// Ex:  [ artist_1, title_1, title_2, artist_3, title_4, title_5 ]
 	$all_album_params = flatten($master_params);
 	// Ex:  ( (artist=?) AND (title=? OR title=?)) OR ( (artist=?) AND (title=? OR title=?) )
-	$all_album_clause = " ( " . implode(" ) OR ( " , flatten($master_clause))." ) ";
+	$all_album_clause = "( ( " . implode(" ) OR ( " , flatten($master_clause))." ) )";	// Need TWO sets of parenthesis.
 
 	if($DOING_CUSTOM){
 		
+		// SQL pieces
 		$between_sql = "( timestamp_utc BETWEEN ? AND ? )";
 		$channel_sql = (!empty($channel) ? ' AND channel=? ' : '');
-		/*
-		$custom_sql = "SELECT * 
-									 FROM $table 
-									 WHERE artist 
-									 	IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? ) 
-										AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) 
-										AND ".$between_sql . $channel_sql . " 
-										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
-										ORDER BY timestamp_utc desc";
-		$custom_params = array_merge($artist_spellings, $track_spellings, array($start_ts, $end_ts));
-		*/
 		$custom_sql =  "SELECT * 
 										FROM $table 
-										WHERE $all_album_clause 
+										WHERE $all_album_clause
 										AND ". $between_sql . $channel_sql ."
 										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
 										ORDER BY timestamp_utc DESC";
 		
+		// Assemble matching params
 		$custom_params = array_merge($all_album_params, array($start_ts, $end_ts));
-
-		$res['SQL'] = $custom_sql;
-		$res['Params'] = $custom_params;
 		if(!empty($channel) && $channel != 0){
 			$custom_params[] = $channel;
 		}
@@ -189,17 +168,6 @@ function getLabelSummary($post, $csv = false){
 										AND ".$between_stuff['clause'] . $channel_sql ." 
 										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
 										ORDER BY timestamp_utc desc";
-			/*
-			$tw_sql =  "SELECT * 
-									FROM $table 
-									WHERE artist 
-										IN ( ".str_repeat('?, ', intval(sizeof($artist_spellings) -1 ))."? )  
-										AND title IN ( ".str_repeat('?, ', intval(sizeof($track_spellings) -1 ))."? ) 
-										AND ".$between_stuff['clause'] . $channel_sql . " 
-										AND channel NOT IN (SELECT channel_number FROM sxm_channels WHERE web=1)
-										ORDER BY timestamp_utc desc";
-										$tw_params = array_merge($artist_spellings, $track_spellings, $between_stuff['params']);
-			*/
 
 			// FIRE THIS WEEK'S QUERY
 			$tw_params = array_merge($all_album_params, $between_stuff['params']);
@@ -233,9 +201,9 @@ function getLabelSummary($post, $csv = false){
 	}
 	$spin_ct = sizeof($spins);
 	
-	//===========================================================
-	// IF NOT CSV, SPINS TRUNCATED HERE FOR BROWSER SPEED!!!!!!
-	//===========================================================
+	//==========================================================================
+	// IF NOT CSV, SPINS TRUNCATED HERE FOR BROWSER SPEED (set in top of action)
+	//==========================================================================
 	
 	if(!$csv){	// Slice it if not csv, before running it thru the gauntlet
 		$spins = array_slice($spins, $slice_start, $slice_end);
@@ -256,22 +224,9 @@ function getLabelSummary($post, $csv = false){
 	}
 	
 	if($csv){
-		// $res = array(
-			// 'csv' => $csv_from_spins,
-			// 'filename' => str_replace(' ', '-', getLabelByID($label_id)) . '-LABEL-SUMMARY.csv',
-		// );
 		$res['csv'] = $csv_from_spins;
 		$res['filename'] = str_replace(' ', '-', getLabelByID($label_id)) . '-LABEL-SUMMARY.csv';
 	}else{
-		// $res = array(
-			// For header info:
-			// 'upper_bound' => $upper_bound,
-			// 'spin_ct' => $spin_ct,
-			// 'average' => $avg,
-			// 'csv' => $csv_from_spins,
-			// 'chartData' => array_reverse($chartData),	// Chart goes Old -> New
-			// 'spins' => $spins,	// Detail table
-			// );
 			$res['upper_bound'] = $upper_bound;
 			$res['spin_ct'] = $spin_ct;
 			$res['average'] = $avg;
@@ -287,62 +242,3 @@ function getAlbumIdsByLabel($label_id){
 	$album_ids = $m->db->fetch_value("SELECT GROUP_CONCAT(album_id) FROM our_albums WHERE label_id=?", array($label_id));
 	return explode(",", $album_ids);
 }
-
-function getArtistsByLabel($label_id){
-	$artist_sql1 = "SELECT DISTINCT ar.artist_name
-									FROM our_tracks t 
-									LEFT JOIN our_albums al 
-										ON t.album_id=al.album_id 
-									LEFT JOIN our_artists ar 
-										ON t.artist_id=ar.artist_id
-									WHERE al.label_id=? AND ar.artist_name IS NOT NULL AND ar.artist_name <> ''";
-	
-	$artist_sql2 = "SELECT DISTINCT ar.artist_alt_spelling
-									FROM our_tracks t 
-									LEFT JOIN our_albums al 
-										ON t.album_id=al.album_id 
-									LEFT JOIN our_artists__alt_spelling ar 
-										ON t.artist_id=ar.artist_id
-									WHERE al.label_id=? AND ar.artist_alt_spelling IS NOT NULL AND ar.artist_alt_spelling <> ''";
-	
-	$ret_spellings = array();
-	$m = new Model('our_artists');
-	$artist_res_1 = $m->db->fetch($artist_sql1, array($label_id));
-	$artist_res_2 = $m->db->fetch($artist_sql2, array($label_id));
-	$artist_spellings = array_merge($artist_res_1, $artist_res_2);
-	foreach($artist_spellings as $spelling){
-		$field = isset($spelling['artist_alt_spelling']) ? 'artist_alt_spelling' : 'artist_name';
-		$ret_spellings[] = $spelling[$field];
-	}
-	// dnd($artist_res_2);
-	return $ret_spellings;
-}
-
-function getTracksByLabel($label_id){
-	$artist_sql1 = "SELECT DISTINCT t.track_title
-									FROM our_tracks t 
-									LEFT JOIN our_albums al 
-										ON t.album_id=al.album_id 
-									WHERE al.label_id=? AND t.track_title IS NOT NULL AND t.track_title <> ''";
-	
-	$artist_sql2 = "SELECT DISTINCT t_alt.track_alt_spelling AS track_title
-									FROM our_tracks__alt_spelling t_alt
-									LEFT JOIN our_tracks t 
-										ON t_alt.track_gid=t.track_gid
-									LEFT JOIN our_albums al 
-										ON t.album_id=al.album_id
-									WHERE al.label_id=? 
-										AND t_alt.track_alt_spelling IS NOT NULL 
-										AND t_alt.track_alt_spelling <> ''";
-	
-	$ret_spellings = array();
-	$m = new Model('our_tracks');
-	$track_res_1 = $m->db->fetch($artist_sql1, array($label_id));
-	$track_res_2 = $m->db->fetch($artist_sql2, array($label_id));
-	$track_spellings = array_merge($track_res_1, $track_res_2);
-	foreach($track_spellings as $spelling){
-		$ret_spellings[] = $spelling['track_title'];
-	}
-	return $ret_spellings;
-}
-

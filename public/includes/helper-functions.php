@@ -91,11 +91,6 @@ function excludeChannelSql(){
 
 function oldTimestamp($ts){
 	$old = false;
-	// if(!isValidTimeStamp($start_ts)){	// Keep this for now, you might need it later BUT.... it's useless and broke the API endpoint
-	// 	$ts = strtotime($ts);
-	// }else{
-	// 	die("Valid TS!");
-	// }
 	if($ts < strtotime('-6 months')) {
 		$old = true;
 	}
@@ -138,35 +133,17 @@ function getBetweenClause($weeks_shown, $just_text = 0){	// Pass a 1 to get "tim
 		die("Invalid period.");
 	}
 	
-	// EXPERIMENTAL! Seems to work for now...
-	//======================
-	// if(1){
-		$start_fixed = timestampIntoUTC($pd_start);
-		$end_fixed = timestampIntoUTC($pd_end);
-		// die("past here");
-		if($just_text){
-			return "(timestamp_utc BETWEEN $start_fixed AND $end_fixed )";
-		}else{
-			$clause = "( timestamp_utc BETWEEN ? AND ? )";
-			return array(
-				'clause' => $clause,
-				'params' => array($start_fixed, $end_fixed),
-			);
-		}
-	// }else{
-		
-	// 	// END EXPERIMENTAL
-	// 	//===============================
-	// 	if($just_text){
-	// 		return "(timestamp_utc BETWEEN $pd_start AND $pd_end )";
-	// 	}else{
-	// 		$clause = "( timestamp_utc BETWEEN ? AND ? )";
-	// 		return array(
-	// 			'clause' => $clause,
-	// 			'params' => array($pd_start, $pd_end),
-	// 		);
-	// 	}
-	// }
+	$start_fixed = timestampIntoUTC($pd_start);
+	$end_fixed = timestampIntoUTC($pd_end);
+	if($just_text){
+		return "(timestamp_utc BETWEEN $start_fixed AND $end_fixed )";
+	}else{
+		$clause = "( timestamp_utc BETWEEN ? AND ? )";
+		return array(
+			'clause' => $clause,
+			'params' => array($start_fixed, $end_fixed),
+		);
+	}
 }
 
 function whereClauseForTrack($gid){
@@ -206,7 +183,6 @@ function whereClauseForTrack($gid){
 			$track_wheres[] = 'title=?';
 			$query_params[] = $t['track_alt_spelling'];
 		}
-		// $i++;	/// ... why was this ever here?
 	}
 	
 	$where_clause = '('.implode(' OR ', $artist_wheres).') AND ('.implode(' OR ', $track_wheres) . ')';
@@ -237,10 +213,10 @@ function whereClauseForAlbum($album_id){
 							LEFT JOIN our_artists__alt_spelling alt ON a.artist_id=alt.artist_id 
 							LEFT JOIN artist_x_album axa ON axa.artist_id=a.artist_id
 						WHERE axa.album_id=?";
-	
+
 	$track_stuff = $model->db->fetch($t_sql, array($album_id));
 	$artist_stuff = $model->db->fetch($a_sql, array($album_id));
-	
+
 	// Get query results into arrays to query perfs for all possible spellings.
 	$query_params = array();
 	$track_wheres = array();
@@ -375,29 +351,6 @@ function xref_channel($channel_id = 0){
 	if($channel_id && intval($channel_id)){
 		$cm = new Model('sxm_channels');
 		$c = $cm->db->fetch_value("SELECT channel_name FROM sxm_channels WHERE channel_number=?", array($channel_id));
-		/*
-		switch(intval($channel_id)):
-			case 77:  $c = "Kidz Bop"; break;
-			case 78:  $c = "Kids Place Live"; break;
-			case 93:  $c = "Netflix Is A Joke"; break;
-			case 94:  $c = "Comedy Greats"; break;
-			case 95:  $c = "Comedy Central Radio"; break;
-			case 96:  $c = "Kevin Hart's Laugh Out Loud"; break;
-			case 97:  $c = "Jeff and Larry"; break;
-			case 98:  $c = "Laugh USA"; break;
-			case 99:  $c = "Raw Dog Comedy"; break;
-			case 104:  $c = "Comedy Classics"; break;
-			case 105:  $c = "She's So Funny"; break;
-			case 106:  $c = "She's So Funny - Web Channel"; break;
-			case 168: $c = "Canada Laughs"; break;
-			
-			case 16:  $c = "The Blend"; break;
-			case 741:  $c = "The Village"; break;
-			case 782:  $c = "Christmas Spirit"; break;
-			
-			default:  $c = 'No Channel'; break;
-		endswitch;
-		*/
 	}else{
 		$c = 'No Channel';
 	}
@@ -474,21 +427,7 @@ function csvForSummary($spins){
 }
 
 function csvForDan($spins){
-	// $categories = array(
-		// 0 => 'TOTAL', 
-		// 99 => 'Raw Dog', 
-		// 98 => 'Laugh USA',
-		// 96 => 'LOL', 
-		// 97 => 'J&L', 
-		// 168 => 'JFL'
-	// );
-	// $headers = array();
-	// foreach($categories as $cat){
-		// $headers[] = getHeadersForCategory($cat);
-	// }
-	// $csv = array_merge($headers);
-	
-	// Headers are alllllready in there
+	// ... what does this do?
 	foreach($spins as $row){
 		$csv[] = $row;
 	}
@@ -514,21 +453,18 @@ function csvForTopAlbums($spins){
 
 function flatten($in_arr){
 	$objTmp = (object) array('aFlat' => array());
-	array_walk_recursive($in_arr, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);
+	array_walk_recursive($in_arr, create_function('&$v, $k, &$t', '$t->aFlat[] = $v;'), $objTmp);	// WARN: deprecated
 	$out_arr = $objTmp->aFlat;
 	return $out_arr;
 }
 
 
-/*
-94: "Comedy Greats",
-			95: "Comedy Central Radio",
-			96: "Kevin Hart's Laugh Out Loud",
-			97: "Blue Collar Comedy",
-			98: "Laugh USA",
-			99: "Raw Dog",
-			168: "Canadian Comedy Jukebox",
-			77: "Kids Place Live",
-			78: "Kidz Bop",
-			93: "Netflix Is A Joke Radio",
-			*/
+// Print fully executable (non-parameterized) SQL statement
+function debugSqlAndParams($sql, $params){
+
+	// Replace ?'s with params, evacuate magic quotes, and print.
+	$raw_sql = vsprintf(str_replace("?", '`%s`', $sql), $params);
+	$raw_sql = str_replace('"', '\"', $raw_sql);
+	$raw_sql = str_replace('`', '"', $raw_sql);
+	die($raw_sql);
+}

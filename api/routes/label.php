@@ -83,18 +83,16 @@ function getLabelByID($l_id){
 
 function getLabelSummary($post, $csv = false){
 
-	$SPINS_PER_PAGE = 1000;	// TODO: On-page pagination? 
-	
-	// DECODE POST
-	$DOING_CUSTOM = false;
 	$res = array();
-	$label_id = intval($post['label_id']);
-	$label_name = getLabelName($label_id);
+	$SPINS_PER_PAGE = 200;
+
+	// DECODE POST
+	//====================
+	$DOING_CUSTOM = false;
 	$channel = !empty($post['channel']) ? intval($post['channel']) : 0;	// This CAN'T come in as zero!
-	$label_id = ( isset($post['label_id']) || $post['label_id'] == 0 ) ? intval($post['label_id']) : null;	// This CAN come in zero!
-	
+	$label_id = isset($post['label_id']) ? intval($post['label_id']) : 0; // This CAN come in zero!
+	$label_name = getLabelName($label_id);
 	if($post['custom']){	// Pass TIME!!! To avoid false cutoff. Also account for timezones.
-		
 		$DOING_CUSTOM = true;
 		$start_ts = !empty($post['start_date']) ? timestampForDatabase($post['start_date']. ' 00:00:00') : timestampForDatabase('2000-01-01 00:00:00');
 		$end_ts = (!empty($post['end_date'])) ? timestampForDatabase($post['end_date']. ' 23:59:59') : timestampForDatabase('2050-01-01 23:59:59');
@@ -134,12 +132,19 @@ function getLabelSummary($post, $csv = false){
 	// Ex:  [ artist_1, title_1, title_2, artist_3, title_4, title_5 ]
 	$all_album_params = flatten($master_params);
 	// Ex:  ( (artist=?) AND (title=? OR title=?)) OR ( (artist=?) AND (title=? OR title=?) )
-	$all_album_clause = "( ( " . implode(" ) OR ( " , flatten($master_clause))." ) )";	// Need TWO sets of parenthesis.
+	$all_album_clause = "(( " . implode(" )  OR  ( " , flatten($master_clause))." ))";	// Need TWO sets of parenthesis.
+
+	// OR  ( (  ) AND (  ) )
+	$all_album_clause = str_replace('OR  ( (  ) AND (  ) )', '', $all_album_clause);	// This bullshit sneaks in here. Get rid of it.
+
+	// Keep this to debug SQL.
+	// $master_sql_statement = vsprintf(str_replace("?", "`%s`", $all_album_clause), $all_album_params);
+	// die($master_sql_statement);
 
 	if($DOING_CUSTOM){
 		
 		// SQL pieces
-		$between_sql = "( timestamp_utc BETWEEN ? AND ? )";
+		$between_sql = '( timestamp_utc BETWEEN ? AND ? )';
 		$channel_sql = (!empty($channel) ? ' AND channel=? ' : '');
 		$custom_sql =  "SELECT * 
 										FROM $table 
@@ -174,6 +179,8 @@ function getLabelSummary($post, $csv = false){
 			if(!empty($channel)){
 				$tw_params[] = $channel;
 			}
+
+			// debugSqlAndParams($tw_sql, $tw_params);
 
 			$tw_spins = $sm->db->fetch($tw_sql, $tw_params);
 

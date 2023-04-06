@@ -8,6 +8,15 @@ $res = array(
 	'artist_created' => false,
 );
 
+/* ADD THIS MAGIC QUERY: Find all 'orphan' records and add an axa record for them.
+
+INSERT IGNORE INTO artist_x_album (artist_id, album_id) 
+SELECT artist_id, album_id
+FROM our_tracks 
+  WHERE artist_id NOT IN(SELECT DISTINCT(artist_id) FROM artist_x_album)
+	AND album_id NOT IN(SELECT DISTINCT(album_id) FROM artist_x_album)
+*/
+
 if($ACTION == 'album'){
 	if(is_array($_POST['album']) && !empty($_POST['album'])){
 		

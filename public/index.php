@@ -13,7 +13,7 @@ For global markup, see index.html
 $DEBUG = 0;
 
 // Dependencies 
-$SPA_MARKUP = file_get_contents('template/index.html');	// npm run build from local proj root. Paths to dependencies are also from root.
+$SPA_MARKUP = file_get_contents('index.html');	// npm run build from local proj root. Paths to dependencies are also from root.
 require_once('includes/classes/Singleton.php');
 require_once('includes/classes/Registry.php');
 require_once('includes/classes/Database.php');

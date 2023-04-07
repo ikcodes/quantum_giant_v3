@@ -4,6 +4,7 @@ static/
 node_modules/
 
 # Creds / setup (use the sample file)
+.env
 public/config.php
 
 # OSX

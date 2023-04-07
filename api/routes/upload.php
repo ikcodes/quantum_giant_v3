@@ -8,14 +8,6 @@ $res = array(
 	'artist_created' => false,
 );
 
-/* ADD THIS MAGIC QUERY: Find all 'orphan' records and add an axa record for them.
-
-INSERT IGNORE INTO artist_x_album (artist_id, album_id) 
-SELECT artist_id, album_id
-FROM our_tracks 
-  WHERE artist_id NOT IN(SELECT DISTINCT(artist_id) FROM artist_x_album)
-	AND album_id NOT IN(SELECT DISTINCT(album_id) FROM artist_x_album)
-*/
 
 if($ACTION == 'album'){
 	if(is_array($_POST['album']) && !empty($_POST['album'])){
@@ -107,7 +99,7 @@ if($ACTION == 'album'){
 					$album_params['artist_created'] = true;
 					$artists_created++;
 				}
-				createBridgeRecordForCompilation($artist_id, $album_id);
+				// createBridgeRecordForCompilation($artist_id, $album_id);	// Let's see if doublecheckBridgeRecords solves this for us.
 			}
 			
 			if($multi_albums == true){
@@ -119,17 +111,7 @@ if($ACTION == 'album'){
 				}
 			}
 			
-			// if($index == 0 && $artist_id && $album_id){
-			// 	$mod = new Model('artist_x_album');
-			// 	$mod->insert(array(intval($artist_id), intval($album_id)));
-			// 	$index++;
-			// }
-			
 			// Create track record
-			if($album_id == 0){
-				die("This isnt going to work!!!!!!!!!!!!!!");
-			}
-			
 			$track_gid = findTrackFromMetadata($track['Title'], $artist_id, $track['ISRC Code']);
 			if(!$track_gid){
 				$track_record = array(
@@ -153,6 +135,9 @@ if($ACTION == 'album'){
 				$tracks_skipped++;
 			}
 		}
+
+		// Finally, run the 'magic query' to reunite any orphan records with their track parent.
+		doubleCheckBridgeRecords();
 		
 		// FINAL RESPONSE
 		//================
@@ -257,4 +242,18 @@ function findTrackFromMetadata($track_title, $artist_id, $isrc){	// 04.25.22 Add
 	$res = $tm->db->fetch($sql, array($track_title, $track_title, $artist_id));
 	$gid = isset($res[0]['gid']) ? intval($res[0]['gid']) : false;
 	return $gid;
+}
+
+// Ensure a record is created that ties each artist to compilation albums that feature one of their tracks.
+function doubleCheckBridgeRecords() {
+	$sql = `INSERT IGNORE INTO artist_x_album (artist_id, album_id) 
+						SELECT artist_id, album_id 
+						FROM our_tracks 
+						WHERE artist_id NOT IN(
+								SELECT DISTINCT(artist_id) FROM artist_x_album) 
+							AND album_id NOT IN(
+								SELECT DISTINCT(album_id) FROM artist_x_album)`;
+	$am = new Model('artist_x_album');
+	$am->db->insert($sql);
+	return;
 }

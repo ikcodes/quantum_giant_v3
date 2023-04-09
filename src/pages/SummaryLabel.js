@@ -113,6 +113,9 @@ class LabelSummary extends React.Component {
           chartData: [],
         },
         weeks_shown_text: "Now viewing all spins in a Custom Date Range.",
+        pagination: [],
+        pages: 1,
+        page: 1,
       },
       () => {
         if (this.state.custom_dates.start.length) {
@@ -134,6 +137,9 @@ class LabelSummary extends React.Component {
           spins: [],
           chartData: [],
         },
+        pagination: [],
+        pages: 1,
+        page: 1,
       },
       () => {
         this.queryForSummary();
@@ -219,9 +225,11 @@ class LabelSummary extends React.Component {
   }
 
   renderSpinChart() {
+    console.log("---> STATE FOR THANG <--", this.state);
     if (
-      (!this.state.loading && this.state.custom_range !== true) ||
-      (this.state.summary.spins.length && this.state.tableLoading)
+      ((!this.state.loading && this.state.custom_range !== true) ||
+        (this.state.summary.spins.length && this.state.tableLoading)) &&
+      this.state.summary.chartData.length
     ) {
       return (
         <ResponsiveContainer width='100%' height={360}>
@@ -605,7 +613,12 @@ class LabelSummary extends React.Component {
               compact
               striped
               unstackable
-              style={this.state.loading ? { display: "none" } : {}}
+              style={
+                this.state.loading ||
+                (!this.state.summary.spins.length && !this.state.pagination.length)
+                  ? { display: "none" }
+                  : {}
+              }
             >
               <Table.Header>
                 <Table.Row>

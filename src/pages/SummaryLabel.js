@@ -22,7 +22,7 @@ import {
 } from "recharts";
 
 // Semantic Elements
-import { Button, Input, Segment, Table, Radio } from "semantic-ui-react";
+import { Button, Input, Segment, Table, Radio, Menu, Icon } from "semantic-ui-react";
 import { CSVLink } from "react-csv";
 
 //===================================================
@@ -51,8 +51,12 @@ class LabelSummary extends React.Component {
       csvExport: [[]],
       csv_ready: false,
       csv_downloading: false,
+
+      pagination: [],
+      page: 1,
     };
     this.updateChannel = this.updateChannel.bind(this);
+    this.spinPagination = this.spinPagination.bind(this);
     this.generateExport = this.generateExport.bind(this);
     this.queryForSummary = this.queryForSummary.bind(this);
     this.updateWeeksShown = this.updateWeeksShown.bind(this);
@@ -198,11 +202,25 @@ class LabelSummary extends React.Component {
     return weekInt === 0 ? "This Week" : weekInt === 1 ? "Last Week" : "Last " + weekInt + " weeks";
   }
 
+  spinPagination(pageNum) {
+    this.setState(
+      (prevState) => {
+        let newSummary = prevState["summary"];
+        newSummary.spins = [];
+        return {
+          tableLoading: true,
+          summary: newSummary,
+          page: pageNum,
+        };
+      },
+      () => this.queryForNextPage()
+    );
+  }
+
   renderSpinChart() {
     if (
-      this.state.summary.spins.length &&
-      !this.state.loading &&
-      this.state.custom_range !== true
+      (!this.state.loading && this.state.custom_range !== true) ||
+      (this.state.summary.spins.length && this.state.tableLoading)
     ) {
       return (
         <ResponsiveContainer width='100%' height={360}>
@@ -230,7 +248,11 @@ class LabelSummary extends React.Component {
       );
     } else if (this.state.custom_range === true) {
       return <p>&nbsp;</p>;
-    } else if (!this.state.summary.spins.length && !this.state.loading) {
+    } else if (
+      !this.state.summary.spins.length &&
+      !this.state.tableLoading &&
+      !this.state.loading
+    ) {
       return (
         <div>
           <h3 style={{ fontWeight: "bold", color: "#2b2545" }}>No spins!</h3>
@@ -336,6 +358,7 @@ class LabelSummary extends React.Component {
                   var summaryPost = {
                     label_id: this.state.label_id,
                     channel: this.state.channel,
+                    page: this.state.page,
                   };
                   if (this.state.custom_range === true) {
                     if (this.state.custom_dates.start) {
@@ -365,6 +388,10 @@ class LabelSummary extends React.Component {
                         csvExport: res.data.csv,
                         summary: res.data,
                         weeks_shown_text: "Now viewing all spins in the " + newWeekText + ".",
+
+                        // Pagination
+                        pagination: res.data.pagination,
+                        pages: res.data.pages,
                       },
                       () => this.renderExportButton()
                     );
@@ -383,9 +410,58 @@ class LabelSummary extends React.Component {
     }
   }
 
+  // ONLY RUNS ON PAGINATION
+  //===========================
+  queryForNextPage() {
+    this.renderExportButton();
+    this.setState(
+      {
+        tableLoading: true,
+      },
+      () => {
+        var summaryPost = {
+          label_id: this.state.label_id,
+          channel: this.state.channel,
+          page: this.state.page,
+        };
+        if (this.state.custom_range === true) {
+          if (this.state.custom_dates.start) {
+            summaryPost["start_date"] = this.state.custom_dates.start;
+            summaryPost["custom"] = true;
+          }
+          if (this.state.custom_dates.end) {
+            summaryPost["end_date"] = this.state.custom_dates.end;
+            summaryPost["custom"] = true;
+          }
+          if (this.state.custom_dates.start === "" && this.state.custom_dates.end === "") {
+            alert("There was an error. Please try again.");
+            summaryPost["custom"] = false;
+          }
+        } else {
+          summaryPost["weeks"] = this.state.weeks_shown;
+          summaryPost["custom"] = false;
+        }
+        axios.post(config.get("api_url") + "label/summary", summaryPost).then((res) => {
+          let newWeekText = this.convertWeeksToText(this.state.weeks_shown);
+          this.setState(
+            {
+              tableLoading: false,
+              csvExport: res.data.csv,
+              summary: res.data,
+              weeks_shown_text: "Now viewing all spins in the " + newWeekText + ".",
+
+              // Pagination
+              pagination: res.data.pagination,
+              pages: res.data.pages,
+            },
+            () => this.renderExportButton()
+          );
+        });
+      }
+    );
+  }
+
   render() {
-    let displayTableStyle =
-      this.state.summary.spins.length && !this.state.loading ? {} : { display: "none" };
     let displayWeeksShown = this.state.custom_range ? { display: "none" } : { marginBottom: 15 };
     let displayCustomDates = this.state.custom_range ? { marginBottom: 15 } : { display: "none" };
 
@@ -522,11 +598,14 @@ class LabelSummary extends React.Component {
           </div>
 
           <div className='cell small-12 table-scroll'>
-            <p className='note'>
-              <strong>Note:</strong> Spins are truncated for app performance. Please export to see a
-              detailed list of all the spins in this time range.
-            </p>
-            <Table size='small' celled compact striped unstackable style={displayTableStyle}>
+            <Table
+              size='small'
+              celled
+              compact
+              striped
+              unstackable
+              style={this.state.loading ? { display: "none" } : {}}
+            >
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Title</Table.HeaderCell>
@@ -539,12 +618,41 @@ class LabelSummary extends React.Component {
                   {/* UTC for Debug */}
                   {/* <Table.HeaderCell>DB Time</Table.HeaderCell> */}
                 </Table.Row>
+
+                {/* PAGINATION */}
+                <Table.Row style={this.state.no_spins ? { display: "none" } : {}}>
+                  <Table.HeaderCell textAlign='center' colSpan={6}>
+                    <Menu compact secondary size='mini'>
+                      <Menu.Item as='a'>
+                        <Icon name='chevron left' />
+                      </Menu.Item>
+                      {this.state.pagination.map((pageNum) => {
+                        return (
+                          <Menu.Item
+                            active={this.state.page === pageNum}
+                            onClick={() => this.spinPagination(pageNum)}
+                            key={pageNum}
+                            as='a'
+                          >
+                            {pageNum}
+                          </Menu.Item>
+                        );
+                      })}
+                      <Menu.Item as='a' icon>
+                        <Icon name='chevron right' />
+                      </Menu.Item>
+                    </Menu>
+                  </Table.HeaderCell>
+                </Table.Row>
+                {/* END PAGINATION */}
               </Table.Header>
               <Table.Body>
                 <TableBodyLoader
-                  loading={this.state.loading}
+                  loading={this.state.loading || this.state.tableLoading}
                   cols={6}
-                  message='Loading Label Summary...'
+                  message={
+                    this.state.tableLoading ? "Loading Next Page..." : "Loading Label Summary..."
+                  }
                   slow={true}
                 />
                 {this.state.summary.spins.map((spin, index) => {

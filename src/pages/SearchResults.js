@@ -186,10 +186,6 @@ class SearchResults extends React.Component {
         fontSize: 16,
       };
     }
-    var displayPagination = {}; // Empty til no spins
-    if (this.state.no_spins) {
-      displayPagination = { display: "none" };
-    }
 
     return (
       // <Segment id="spins" className="page grid-container">
@@ -227,7 +223,9 @@ class SearchResults extends React.Component {
                   <Table.HeaderCell>Time</Table.HeaderCell>
                   <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
-                <Table.Row style={displayPagination}>
+
+                {/* PAGINATION */}
+                <Table.Row style={this.state.no_spins ? { display: "none" } : {}}>
                   <Table.HeaderCell textAlign='center' colSpan={6}>
                     <Menu compact secondary size='mini'>
                       <Menu.Item as='a'>
@@ -251,6 +249,7 @@ class SearchResults extends React.Component {
                     </Menu>
                   </Table.HeaderCell>
                 </Table.Row>
+                {/* END PAGINATION */}
               </Table.Header>
 
               {/* MAP SPINS */}

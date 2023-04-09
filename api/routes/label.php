@@ -84,7 +84,6 @@ function getLabelByID($l_id){
 function getLabelSummary($post, $csv = false){
 
 	$res = array();
-	$SPINS_PER_PAGE = 200;
 
 	// DECODE POST
 	//====================
@@ -99,11 +98,7 @@ function getLabelSummary($post, $csv = false){
 	}else{
 		$weeks_shown = !empty($post['weeks']) ? intval($post['weeks']) : 4;
 	}
-	
-	// Pagination, baby.
-	$slice_start = isset($post['slice_start']) ? intval($post['slice_start']) : 0;
-	$slice_end = $slice_start + $SPINS_PER_PAGE;
-	
+
 	// INIT VARS FOR LOOP
 	$upper_bound = 0;
 	$spins = array();
@@ -212,8 +207,12 @@ function getLabelSummary($post, $csv = false){
 	}
 	$spin_ct = sizeof($spins);
 	
-	// IF NOT CSV, SPINS TRUNCATED HERE FOR BROWSER SPEED (set in top of action)
-	//==========================================================================
+	// SET PAGINATION
+	//===================
+	$SPINS_PER_PAGE = 100;
+	$slice_start = isset($post['page']) ? (intval($post['page']) * $SPINS_PER_PAGE) - $SPINS_PER_PAGE: 0;
+	$slice_end = $slice_start + $SPINS_PER_PAGE;
+
 	if(!$csv){	// Slice it if not csv, before running it thru the gauntlet
 		$spins = array_slice($spins, $slice_start, $slice_end);
 		$csv_from_spins = array();
@@ -243,6 +242,11 @@ function getLabelSummary($post, $csv = false){
 			$res['csv'] = $csv_from_spins;
 			$res['chartData'] = array_reverse($chartData);	// Chart goes Old -> New
 			$res['spins'] = $spins;	// Detail table
+		
+			// pagination stuff
+			$last_page = ceil(intval($spin_ct) / intval($SPINS_PER_PAGE));
+			$res['pagination'] = range(1, ($last_page -1));
+			$res['pages'] = $last_page;
 	}
 	return $res;
 }

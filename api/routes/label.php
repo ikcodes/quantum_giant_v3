@@ -6,7 +6,7 @@
 
 if($ACTION == 'list'){
 	$sm = new Model('labels');
-	$labels = $sm->get_items(array('where' => 'label_id <> 0'));
+	$labels = $sm->get_items(array('where' => 'label_id <> 0', 'order' => 'label_name ASC'));
 	$res = array(
 		'labels' => $labels,
 	);
@@ -209,7 +209,8 @@ function getLabelSummary($post, $csv = false){
 	
 	// SET PAGINATION
 	//===================
-	$SPINS_PER_PAGE = 100;
+	$MAX_PAGES = 15;
+	$SPINS_PER_PAGE = 200;
 	$slice_start = isset($post['page']) ? (intval($post['page']) * $SPINS_PER_PAGE) - $SPINS_PER_PAGE: 0;
 
 	if(!$csv){	// Slice it if not csv, before running it thru the gauntlet
@@ -248,7 +249,8 @@ function getLabelSummary($post, $csv = false){
 		
 			// pagination stuff
 			$last_page = ceil(intval($spin_ct) / intval($SPINS_PER_PAGE));
-			$res['pagination'] = $last_page > 1 ? range(1, ($last_page )) : array();
+			$last_page_to_display = $last_page >= $MAX_PAGES ? $MAX_PAGES : $last_page;	// Only display the max, they can use the export if they like instead
+			$res['pagination'] = ($last_page > 1) ? range(1, ($last_page_to_display)) : array();
 			$res['pages'] = $last_page;
 	}
 	return $res;

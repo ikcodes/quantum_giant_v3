@@ -531,6 +531,7 @@ class LabelSummary extends React.Component {
                 <Table.Row>
                   <Table.HeaderCell>Title</Table.HeaderCell>
                   <Table.HeaderCell>Artist</Table.HeaderCell>
+                  <Table.HeaderCell>Album</Table.HeaderCell>
                   <Table.HeaderCell>Channel</Table.HeaderCell>
                   <Table.HeaderCell>Date</Table.HeaderCell>
                   <Table.HeaderCell>Time</Table.HeaderCell>
@@ -542,7 +543,7 @@ class LabelSummary extends React.Component {
               <Table.Body>
                 <TableBodyLoader
                   loading={this.state.loading}
-                  cols={5}
+                  cols={6}
                   message='Loading Label Summary...'
                   slow={true}
                 />
@@ -551,6 +552,7 @@ class LabelSummary extends React.Component {
                     <Table.Row key={index}>
                       <Table.Cell>{spin.title}</Table.Cell>
                       <Table.Cell>{spin.artist}</Table.Cell>
+                      <Table.Cell>{spin.display_album}</Table.Cell>
                       <Table.Cell>{spin.display_channel}</Table.Cell>
                       <Table.Cell>{spin.display_date}</Table.Cell>
                       <Table.Cell>{spin.display_time}</Table.Cell>

@@ -357,6 +357,20 @@ function xref_channel($channel_id = 0){
 	return $c ? $c : 'No Channel';
 }
 
+function xref_album_name($title = '', $artist = ''){
+	if(empty($title) or empty($artist)){
+		return "---";
+	}
+	$am = new Model('our_albums');
+	$sql = "SELECT al.album_title 
+					FROM our_albums al 
+						LEFT JOIN our_tracks t ON al.album_id=t.album_id
+						LEFT JOIN our_artists ar ON ar.artist_id=t.artist_id
+					WHERE t.track_title=? AND ar.artist_name=?";
+	$title = $am->db->fetch_value($sql, array($title, $artist));
+	return $title ? $title : '---';
+}
+
 function getWeektext($week_int){
 	if( intval($week_int) >= 0 ){
 		switch(intval($week_int)){
@@ -404,6 +418,20 @@ function csvFromSpins($spins){
 			// 'Channel' => $spin['display_channel'],
 			// 'Date' => $spin['display_date'],
 			// 'Time' => $spin['display_time'],
+		);
+		$csv[] = $this_spin;
+	}
+	return $csv;
+}
+
+// Same as the above, but include album title (achievable with title and artist via xref_album_name)
+function csvFromSpinsAlbum($spins){
+	$csv = array(
+		array('Title', 'Artist', 'Album', 'Channel', 'Date', 'Time'),	// $arr[0] is headers
+	);
+	foreach($spins as $spin){
+		$this_spin = array(
+			$spin['title'], $spin['artist'], $spin['display_album'], $spin['display_channel'], $spin['display_date'], $spin['display_time']
 		);
 		$csv[] = $this_spin;
 	}

@@ -198,6 +198,10 @@ function getLabelSummary($post, $csv = false){
 			$spins = array_merge($spins, $tw_spins);
 		}
 	}
+
+	//==========================================================================
+	// END DISTINCT LOGIC FOR WEEKLY / CUSTOM-DATE SUMMARIES	
+	//==========================================================================
 	
 	if($weeks_shown > 0){
 		$results_for_avg = $results;
@@ -208,16 +212,15 @@ function getLabelSummary($post, $csv = false){
 	}
 	$spin_ct = sizeof($spins);
 	
-	//==========================================================================
 	// IF NOT CSV, SPINS TRUNCATED HERE FOR BROWSER SPEED (set in top of action)
 	//==========================================================================
-	
 	if(!$csv){	// Slice it if not csv, before running it thru the gauntlet
 		$spins = array_slice($spins, $slice_start, $slice_end);
 		$csv_from_spins = array();
 	}
 	
 	foreach($spins as &$spin){
+		$spin['display_album'] = xref_album_name($spin['title'], $spin['artist']);
 		$spin['display_channel'] = xref_channel($spin['channel']);
 		// Want EST? Use timestampForApplication()
 		$stamp = timestampForApplication($spin['timestamp_utc']);
@@ -226,8 +229,8 @@ function getLabelSummary($post, $csv = false){
 		$spin['display_time'] = $stamp['time'];
 	}
 	
-	if($csv){	// This function needs the reformatted stuff above
-		$csv_from_spins = csvFromSpins($spins);
+	if($csv){
+		$csv_from_spins = csvFromSpinsAlbum($spins);
 	}
 	
 	if($csv){

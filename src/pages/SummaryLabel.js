@@ -53,6 +53,7 @@ class LabelSummary extends React.Component {
       csv_downloading: false,
 
       pagination: [],
+      pages: 1, // for chevrons
       page: 1,
     };
     this.updateChannel = this.updateChannel.bind(this);
@@ -623,7 +624,16 @@ class LabelSummary extends React.Component {
                 <Table.Row style={this.state.no_spins ? { display: "none" } : {}}>
                   <Table.HeaderCell textAlign='center' colSpan={6}>
                     <Menu compact secondary size='mini'>
-                      <Menu.Item as='a'>
+                      <Menu.Item
+                        as='a'
+                        icon
+                        disabled={this.state.page <= 1}
+                        onClick={() => {
+                          if (this.state.page > 1) {
+                            this.spinPagination(this.state.page - 1);
+                          }
+                        }}
+                      >
                         <Icon name='chevron left' />
                       </Menu.Item>
                       {this.state.pagination.map((pageNum) => {
@@ -638,7 +648,16 @@ class LabelSummary extends React.Component {
                           </Menu.Item>
                         );
                       })}
-                      <Menu.Item as='a' icon>
+                      <Menu.Item
+                        as='a'
+                        icon
+                        disabled={this.state.page >= this.state.pages}
+                        onClick={() => {
+                          if (this.state.page < this.state.pages) {
+                            this.spinPagination(this.state.page + 1);
+                          }
+                        }}
+                      >
                         <Icon name='chevron right' />
                       </Menu.Item>
                     </Menu>

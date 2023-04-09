@@ -211,10 +211,9 @@ function getLabelSummary($post, $csv = false){
 	//===================
 	$SPINS_PER_PAGE = 100;
 	$slice_start = isset($post['page']) ? (intval($post['page']) * $SPINS_PER_PAGE) - $SPINS_PER_PAGE: 0;
-	$slice_end = $slice_start + $SPINS_PER_PAGE;
 
 	if(!$csv){	// Slice it if not csv, before running it thru the gauntlet
-		$spins = array_slice($spins, $slice_start, $slice_end);
+		$spins = array_slice($spins, $slice_start, $SPINS_PER_PAGE);
 		$csv_from_spins = array();
 	}
 	
@@ -245,7 +244,7 @@ function getLabelSummary($post, $csv = false){
 		
 			// pagination stuff
 			$last_page = ceil(intval($spin_ct) / intval($SPINS_PER_PAGE));
-			$res['pagination'] = range(1, ($last_page -1));
+			$res['pagination'] = range(1, ($last_page ));
 			$res['pages'] = $last_page;
 	}
 	return $res;

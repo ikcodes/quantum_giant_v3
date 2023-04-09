@@ -225,7 +225,6 @@ class LabelSummary extends React.Component {
   }
 
   renderSpinChart() {
-    console.log("---> STATE FOR THANG <--", this.state);
     if (
       ((!this.state.loading && this.state.custom_range !== true) ||
         (this.state.summary.spins.length && this.state.tableLoading)) &&

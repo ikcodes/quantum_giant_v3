@@ -239,12 +239,16 @@ function getLabelSummary($post, $csv = false){
 			$res['spin_ct'] = $spin_ct;
 			$res['average'] = $avg;
 			$res['csv'] = $csv_from_spins;
-			$res['chartData'] = array_reverse($chartData);	// Chart goes Old -> New
+			if(count($spins)){
+				$res['chartData'] = array_reverse($chartData);	// Chart goes Old -> New
+			}else{
+				$res['chartData'] = array();
+			}
 			$res['spins'] = $spins;	// Detail table
 		
 			// pagination stuff
 			$last_page = ceil(intval($spin_ct) / intval($SPINS_PER_PAGE));
-			$res['pagination'] = range(1, ($last_page ));
+			$res['pagination'] = $last_page > 1 ? range(1, ($last_page )) : array();
 			$res['pages'] = $last_page;
 	}
 	return $res;

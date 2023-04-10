@@ -11,3 +11,6 @@ public/config.php
 .DS_Store
 
 _notes.txt
+
+# DB SEED FILES (TODO: genericize these for publication)
+seed/

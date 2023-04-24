@@ -20,7 +20,7 @@ if($ACTION == 'album'){
 			'album_is_compilation' => 0,
 			'album_is_single' => count($_POST['album']) > 1 ? 0 : 1,	// More than 1 track? Not a single.
 			'album_relese_date' => $release,
-			'album_upc' => $_POST['album'][0]['Record Number'],
+			'album_cat_num' => $_POST['album'][0]['Record Number'],
 			'label_id' => $label_id,
 		);
 		
@@ -159,13 +159,13 @@ function createArtistFromMetadata($artist_name){
 	return $artist_id;
 }
 
-function createAlbumFromMetadata($album_title, $artist_id, $compilation = 0, $upc = 'NO UPC', $rel_date = '0000-00-00', $label_id = 0){
+function createAlbumFromMetadata($album_title, $artist_id, $compilation = 0, $cat_num = 'NO CAT NUM', $rel_date = '0000-00-00', $label_id = 0){
 	$am = new Model('our_albums', 'album_id');
 	$album_indata = array(
 		'album_title' => $album_title,
 		'album_is_single' => 0,
 		'album_is_compilation' => $compilation ? 1 : 0,
-		'album_upc' => $upc,
+		'album_cat_num' => $cat_num,
 		'album_release_date' => $rel_date,
 		'label_id' => $label_id,
 	);

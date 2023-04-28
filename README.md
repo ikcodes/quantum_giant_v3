@@ -8,7 +8,7 @@ A dynamic SPA that displays and analyzes XM performance data across the catalog 
 - MySQL
 
 ## Background
-Version 2.x was written about four years ago, and was the first large-scale app I stood up in React. While the application works great in the wild, I have come to regard the cods as fragile, as my fledgling understanding of JSX at the time did not translate into the implementation of best practices. 
+Version 2.x was written about four years ago, and was the first large-scale app I stood up in React. While the application works great in the wild, there is a disparity between older code, written while I was still learning, and newer features, written in a class-based format with much more modern syntax.
 
 V3 will begin exactly where V2 left off, seeking to satisfy several goals (as follows):
 
